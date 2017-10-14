@@ -1,0 +1,30 @@
+\section{Circuit Identifier}
+\subsection{Purpose}
+This device should allow users to accurately map individual outlets to a specific circuit/breaker, by temporarily using/manipulating power from that outlet, which means that it will not be permanently plugged into the circuit.
+\subsection{Requirements}
+\begin{enumerate}
+   \item Shall run off of 120V line
+   \item Shall use or manipulate power for a time interval such that DSP can recognize the device is ``on''.
+   \item Shall not adversely affect other devices on the circuit.
+\end{enumerate}
+
+\subsection{Design Criteria}
+\begin{enumerate}
+\item Should be user friendly/intuitive
+\item Should be easily portable
+\item Efficiency is not a concern
+\item Cost
+\item Overall system should require minimal user input
+\end{enumerate}
+
+\subsection{Ideas}
+\subsubsection{First Idea Descriptor}
+The Identifier must have a master controller (or something similar that is back at the service panel) identify the circuit into which it is plugged. Something that might work is an X-10 power line control module or similar. There are some people who have a device that allows you to turn on and off lights remotely. There is a device you plug in between the socket and the lamp that receives the signal. There is also a controller you plug in to any plug (not sure the plug has to be on the same circuit, but that does not matter in this purpose). The controller sends a high  frequency signal down the line that the receiver intercepts and interprets and an on/off/dim signal. Therefore, the control box could be the thing the team is looking for. The control box is basically a box with a few buttons and a 120-VAC cord. You plug it in and press a button. The controller at the panel sees the high  frequency signal come through, figures out which circuit it came from, and we have our detection. 
+
+\subsubsection{Second Idea Descriptor}
+There are also things that were found online that might work. One of them is called an Extech RT30 Wireless Remote AC Circuit Identifier. It has a clamp that acts as a probe to connect to wires that will have an indication as to if the circuit is being used or not. The data sheet can be found at http://www.globaltestsupply.com/datasheets/RT30data.pdf
+
+\subsubsection{Third Idea Descriptor}
+The other thing that was found online is called an Automatic Circuit Identifier with Digital Receiver. This is a more of a manual approach to see which circuit is on and which is off. It is not the ideal method, but it is an option nonetheless. The information on this can be found at \url{http://www.idealindustries.com/media/pdfs/61534_manual.pdf}
+\subsection{Decision}
+The control box idea was a great idea, but the team did not believe they had enough time to incorporate the design into their project because it was not ready for use directly out of box. It would require more design work than the team had time for. Therefore the team decided to go with idea number 3, which was the Automatic Circuit Identifier with Digital Receiver. It would work very well out of box, and provide the team with the functionality needed to complete this part of the project in a timely fashion. 

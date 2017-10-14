@@ -1,0 +1,45 @@
+{
+\small
+\begin{longtable}[c]{|c|c|c|}
+\caption{Assembly Costs\label{06_Assembly.tex}}\\
+\hline
+\rowcolor{lightgray}
+ Item & Value & Units \\ \hline\hline
+\hline
+\endfirsthead
+
+\caption[]{Continued from previous page}\\
+\hline
+\rowcolor{lightgray}
+ Item & Value & Units \\ \hline\hline
+\hline
+\endhead
+
+\multicolumn{3}{r}{{Continued on next page}} \\
+\endfoot
+
+\endlastfoot
+
+Hourly wage & 20	 & USD \\
+Insurance, vacation, holiday, etc. & 10 & USD \\
+Per work-hour total & 30 & USD \\
+Time to assemble breakers & 0.75 & hour \\
+Time to assemble base station & 0.5 & hour \\
+Time to assemble E-meter & 1.25 & hour \\\
+Breakers per year & 192000 & \\
+Base stations per year & 64000 & \\
+E meters per year & 830000 & \\
+Total time for breaker & 144000 & hour \\
+Total time for base station & 32000 & hour \\
+Total time for E-meter & 1037500 & hour \\
+Breakers labor cost & 4320000 & USD \\
+Base station labor cost & 960000 & USD \\
+E-meter labor cost & 31125000 & USD \\
+Per-breaker labor & 22.5 & USD/Device \\
+Per-base-station labor & 15 & USD/Device \\
+Per-E-meter labor & 37.5 & USD/Device \\ \hline
+Total Labor Hours & 1213500 & hour/year \\
+Total Labor Cost & 36405000 & USD/year \\
+\hline
+\end{longtable}
+}

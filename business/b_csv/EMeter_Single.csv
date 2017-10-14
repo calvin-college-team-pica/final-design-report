@@ -1,0 +1,30 @@
+Item,Quantity,Part Price,Single System,Item Number,Vendor
+LCD Display,1,22.75,22.75,SCLBC,SynchroSystems
+SSOP to DIP Adapter 20-Pin,2,3.95,7.90,BOB-00499,SparkFun
+Break Away Headers -- Straight,1,2.5,2.50,PRT-00116,SparkFun
+1N4148 Diode,24,0.09,2.16,1N4148,Mouser
+2500 Series Box Header,2,1.41,2.82,N2514-6002RB,Mouser
+AVE Series Electrolytic Cap 1uF,12,0.07,0.84,AVE105M50B12T-F,Mouser
+Kehmet .033uF SMD Cap,12,0.59,7.08,C1206C333KARACTU,Mouser
+Kehmet .015uF SMD Cap,6,0.34,2.04,C1206C153KARACTU,Mouser
+Kehmet 47pF SMD Cap,12,0.07,0.84,C0603C470J5GACTU,Mouser
+Murata Inductor EFI,12,0.11,1.32,BLM21BD102SN1D,Mouser
+Maxim RS233a RS232 Driver,1,8.7,8.70,MAX233CPP+G36,Mouser
+D-Sub 9 Connector,1,2.32,2.32,56F404-001,Mouser
+Xbee Connector 2mm pitch,2,1.6,3.20,M22-7131042,Mouser
+16MHz Crystal,1,0.41,0.41,ABLS-16.000MHZ-B4-T,Mouser
+32.768kHz Crystal,1,0.99,0.99,ABS10-32.768KHZ-7-T,Mouser
+Tyco 6P Terminal Block,2,2.33,4.66,796949-6,Mouser
+Tyco 3P Terminal Block,2,0.83,1.66,796949-3,Mouser
+Varistor,3,0.26,0.78,V8ZA05P,Mouser
+Current Transformer,3,6.11,18.33,CST-1020,Mouser
+Linear Regulator,3,1.54,4.62,ZSR300GTA,Mouser
+100nF SMD Cap,3,0.7,2.10,CB037D0104JBA,Mouser
+22uF SMD Cap,4,0.54,2.16,EEE-1CA220SR,Mouser
+18pF SMD Cap,2,0.09,0.18,CGA2B2C0G1H180J,Mouser
+Red SMD LED,1,0.4,0.40,HSMC-C190,Mouser
+Green SMD LED,1,0.88,0.88,HSMQ-C120,Mouser
+Amber SMD LED,1,0.4,0.40,HSMA-C190,Mouser
+7pF SMD Cap,2,0.03,0.06,C0603C0G1E070C,Mouser
+Tact Switch,2,0.47,0.94,B3W-1052,Mouser
+Total:,119,,103.04,,

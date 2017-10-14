@@ -1,0 +1,44 @@
+%TODO: Fix Table, It is too big for page.
+\subsubsection{Capability Justification Table}
+{
+\begin{longtable}[c]{|p{1.5in}|c|c|c|}
+%% Longtable setup
+\caption{Power Supply Capabilities} \\ \hline
+Capability Parameter & Specification & Analysis Result & Remarks \\ \hline
+\endfirsthead
+\caption[]{Continued from previous page} \\ \hline
+Capability Parameter & Specification & Analysis Result & Remarks \\ \hline
+\endhead
+
+\multicolumn{4}{r}{{Continued on next page}} \\
+\endfoot
+
+\endlastfoot
+
+%% Longtable content
+Input Voltage & Min & $7.09\volt$ & From Current Draw \\ \hline
+Input Voltage & Max & 17.10\volt & From Current Draw \\ \hline
+Switching Frequency & Max & 3.38\mega\hertz & From Current Draw \\ \hline
+Output Voltage & Min & 4.99\volt & From Calculation \\ \hline
+Output Voltage & Max & 5.19\volt & From Calculation \\ \hline
+Output Ripple Voltage & Max & 10\milli\volt & Assumed \\ \hline
+Output Current & Max & 2\ampere & From Current Draw \\ \hline
+Output Inductor & Typ & 2.2\micro\henry & From Schematic \\ \hline
+Power Dissipation across Inductor & Max & 99\milli\watt & From Calculation \\ \hline
+Power Dissipation across current sense resistor during current limit mode & Max & 246\milli\watt & From Calculation \\ \hline
+Efficiency & Max & 86.86\percent & From Calculation \\ \hline
+Softstart Time & Min & 8.032\milli\second & From Calculation \\ \hline
+Softstart Time & Max & 12.048\milli\second & From Calculation \\ \hline
+Input Under Voltage Protection Threshold & Min & 4.6\volt & From Datasheet \\ \hline
+Thermal Shutdown & Typ & 155\degree C & From Datasheet \\ \hline
+Line Regulation & Max & 5 +/- 5\percent & Verify by Testing \\ \hline
+Load Regulation & Max & 5 +/- 5\percent & Verify by Testing \\ \hline
+Gain Margin &  &  & Verify by Testing \\ \hline
+Phase Margin &  &  & Verify by Testing \\ \hline
+%\end{tabular}
+%\end{center}
+%\label{default}
+%\end{table}%
+\end{longtable}
+} 
+This table was co-produced with Hilbrand Sybesma, a hardware engineer at JCI. After we were both done working on January 27, 2011, he took the time to work with me on them. As I was creating it, he stopped me if I made any errors and he told me other things to include. He went above and beyond with help.

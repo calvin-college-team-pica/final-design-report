@@ -1,0 +1,16 @@
+\subsection{Project Finances}
+\subsubsection{Bill of Materials}
+\input{business/b_tables/Breakers_Single}
+\input{business/b_tables/Breakers_Batch}
+\input{business/b_tables/EMeter_Single}
+\input{business/b_tables/EMeter_Batch}
+\input{business/b_tables/Power_Supply_Single}
+\input{business/b_tables/Power_Supply_Batch}
+
+\subsubsection{Board Cost}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=4in]{business/b_includes/Power_Supply_Correct_Dims}
+  \caption{Power supply board mockup, 92.5 x 95 mm.}
+  \label{fig:power_supply_board_mockup}
+\end{figure}

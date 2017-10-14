@@ -1,0 +1,102 @@
+\section{E-Meter Appendix}
+\subsection{Device Pinout}
+The following table shows the pins of the MSP430 and how they are connected in the E-meter.
+\input{tables/EMeter_Pinout}
+
+
+\clearpage
+\subsection{Hello World Program}\label{sec:hello_world}
+\ccode{code/hello_world}{Embedded C MSP430 Hello World program.}
+
+\subsection{Compiling the MSPGCC4 Toolchain for Ubuntu Linux}\label{sec:mspgcc4_ubuntu}
+The design team used Ubuntu Linux 10.10 32-bit to compile the MSPGCC4 toolchain. The MSPGCC4 toolchain depends on several packages readily available in the Ubuntu repository:
+\begin{spacing}{1}
+\begin{multicols}{2}
+\begin{itemize}
+\item subversion
+\item gcc-4.4
+\item texinfo
+\item patch
+\item libncurses5-dev
+\item zlibc
+\item zlib1g-dev
+\item libx11-dev
+\item libusb-dev
+\item libreadline6-dev
+\end{itemize}
+\end{multicols}
+\end{spacing}
+Install all the following packages by executing the following command in Terminal:
+\begin{lstlisting}[float, caption=Install MSPGCC4 dependencies]
+sudo apt-get install subversion gcc-4.4 texinfo patch libncurses5-dev zlibc zlib1g-dev libx11-dev libusb-dev libreadline6-dev
+\end{lstlisting}
+
+Next, checkout the MSPGCC4 source from the online subversion repository using the command line version of subversion.
+% Add the command here
+
+Once all the code has been downloaded, switch to the new directory and execute the buildgcc.sh script. Accept all the default options and wait for a while until the compilation completes.
+
+Now navigate to \url{http://mspdebug.sourceforge.net/download.html} and download the latest release. Extract the files from the downloaded archive. Change directories to the newly extracted code and issue a make command. Once the compilation completes, install mspdebug using make install.
+
+This completes all the essential tools for compiling code using MSPGCC4. Some additional tools may be required to work with the programming pod.
+
+In order to load code onto the MSP430, gdb and HAL need to be configured to properly talk to the programming pod. Change to the install directory of the MSPGCC4 (usually /opt/msp430-gcc-4.4.3/bin/msp430-gdb-proxy/) and issue the command:
+\begin{lstlisting}
+sudo wget http://www.soft-switch.org/downloads/mspgcc/msp430-gdbproxy
+\end{lstlisting}
+ once the file transfer completes issue the command:
+\begin{lstlisting}
+chmod 777 msp430-gdbproxy 
+\end{lstlisting}
+to allow the file to execute.
+
+Now switch to /usr/lib and download the libHil.so file using wget:
+\begin{lstlisting}
+sudo wget http://www.soft-switch.org/downloads/mspgcc/libHIL.so
+\end{lstlisting}
+Repeat to download the MSP430.so driver file:
+\begin{lstlisting}
+sudo wget http://www.soft-switch.org/downloads/mspgcc/MSP430.so
+\end{lstlisting}
+
+\subsection{SD16 to RS232 UART Test}\label{sec:sd16_to_uart}
+The following code transmits results from the second SD16 converter to the RS232 \ac{UART}
+\ccode{code/sd16_to_uart}{Embedded C MSP430 code to transmit data from the SD16 readings to the RS232 UART.}
+
+The following Matlab code reads the character values from the MSP430 \ac{UART} and displays them in comparison with a reference sinusoid.
+\matlabscript{code/matlabReader}{Matlab Interpreter for Character Output}
+
+\clearpage
+\subsection{E-Meter Schematic}\label{sec:e_meter_schem}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=5in, angle=90]{includes/E_Meter_Main_Schematic}
+  \caption{E-Meter Main Board Schematic}
+  \label{fig:e_meter_main_schematic_large}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=5in, angle=90]{includes/e_meter_input_board_schem_large}
+  \caption{E-Meter input board schematic.}
+  \label{fig:e_meter_input_schematic_large}
+\end{figure}
+\clearpage
+
+\subsection{E-Meter Printed Circuit Board}\label{sec:e_meter_pcb}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5in, angle=90]{includes/e_meter_main_large}
+  \caption{E-Meter main board.}
+  \label{fig:e_meter_main_board_large}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=5in, angle=90]{includes/e_meter_input_board_large}
+  \caption{E-Meter input board.}
+  \label{fig:e_meter_input_board_large}
+\end{figure}
+\clearpage
+
+\subsection{E-Meter Code Listing}
+\ccode{code/emeter_rc}{Final Measurement and Calculation Code}

@@ -1,0 +1,32 @@
+{
+\begin{longtable}[c]{|c|c|c|c|c|c|}
+\caption{default\label{Breakers_Batch.tex}}\\
+\hline
+\rowcolor{blue}
+Item & Quantity & Price per 1000 & For 1000 Systems & Item Number & Vendor \\
+\hline
+\endfirsthead
+\caption[]{Continued from previous page}\\
+
+\hline
+\rowcolor{blue}
+Item & Quantity & Price per 1000 & For 1000 Systems & Item Number & Vendor \\
+\hline
+\endhead
+\multicolumn{6}{r}{{Continued on next page}} \\
+\endfoot
+
+\endlastfoot
+Solid State Relays  & 2    & 13.00 & 26000.00 & STH24D25                  & Mouser \\
+\hline
+5pF SMD Cap         & 2    & 0.005 & 10.00    & C0603C0G1E050C            & Mouser \\
+\hline
+Opto Isolator       & 2    & 1.76  & 3520.00  & OPI1264C                  & Mouser \\
+\hline
+3.579545MHz Crystal & 1    & 0.35  & 350.00   & ABLSG-3.579545MHZ-D-2-Y-T & Mouser \\
+\hline
+Total:              & 7.00 &       & 29880.00 &                           &        \\
+\hline
+\hline
+\end{longtable}
+}

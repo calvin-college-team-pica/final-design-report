@@ -1,0 +1,378 @@
+\documentclass[11pt,letterpaper,titlepage]{article}
+% Change "article" to "report" to get rid of page number on title page
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}                                 %Provides T1 Font encoding for European characters
+\usepackage{Tabbing}
+\usepackage{array}                                       % Allows for making new column types
+\usepackage{dcolumn}					 % Provides decimal alignment column macros
+\usepackage{fancyhdr}                                    % Produce a "fancy" header using \rhead,\chead,\lhead
+\usepackage{lastpage}
+\usepackage{extramarks}
+\usepackage{chngpage}
+\usepackage{chngcntr} 				         % figure and equation numbering by section
+\usepackage{soul}
+\usepackage{bookmark}                                    % Prevents having to re-run due to labels
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{graphicx,float,wrapfig}
+%\usepackage{tocloft}					 % Gives us the . . . in the TOC always and forever
+\usepackage{ifthen}
+\usepackage{listings}					 % Allows for Listings
+\usepackage{courier}                                     % Provides the courier Font
+\usepackage{subfig}
+\usepackage{float}
+\usepackage[load-configurations = version-1]{siunitx}
+\usepackage[arrowmos]{circuitikz}
+\usepackage{outlines}
+\usepackage{pslatex}                                     % This should switch the font to Times New Roman
+%\usepackage[scaled=.92]{helvet}
+\usepackage[printonlyused,withpage]{acronym}             % Creates acronym table of acronyms and definitions used
+						         % \begin{acronym}[TDMA] ... \end{acronym}   
+\usepackage[final]{pdfpages}
+%\usepackage{natbib}                                     % Turn off for IEEE references
+\usepackage{tikz-timing}
+\usepackage{pdflscape}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{longtable}				         % Provides the Longtable environment
+\usepackage{colortbl}				         % Provides \rowcolor{}
+\usepackage[parfill]{parskip} 			         % remove the dumb indents on all paragraphs
+\usepackage[toc,page]{appendix}				 % Provides more control over the Appendix
+\usepackage{hyperref}				         % Hyperlink output PDF Files
+\usepackage[all]{hypcap}				 % Fix the dumb hyperlink bug!!!
+
+%\input{kvmacros}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TOC dots
+%\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Setup the header and footer
+
+\setlength{\headheight}{15.2pt}
+
+\pagestyle{fancy}                                                       %
+\fancyhead[L]{Team PICA}                                                 %
+\fancyhead[R]{Final Design Report}  %                                                   %
+\fancyfoot[L]{\lastxmark}                                                      %                                                              %
+\fancyfoot[C]{}
+\fancyfoot[R]{Page\ \thepage\ of\ \pageref{LastPage}}                          %
+\renewcommand\headrulewidth{0.4pt}                                      %
+\renewcommand\footrulewidth{0.4pt}                                      %
+%\renewcommand{\headheight}{14pt}
+\headheight=14pt
+
+\fancypagestyle{mySuperFancy}{
+\fancyhead[L]{Team PICA}                                                 %
+\fancyhead[R]{Final Design Report}  %                                                   %
+\fancyfoot[L]{\lastxmark}                                                      %                                                              %
+\fancyfoot[C]{}
+\fancyfoot[R]{Page\ \thepage\ of\ \pageref{LastPage}}                          %
+\renewcommand\headrulewidth{0.4pt}                                      %
+\renewcommand\footrulewidth{0.4pt}                                      %
+%\renewcommand{\headheight}{14pt}
+\headheight=14pt
+}
+
+\fancypagestyle{plain}{
+\fancyhead[L]{Team PICA}                                                 %
+\fancyhead[R]{Final Design Report}  %                                                 %
+\fancyfoot[L]{}
+\fancyfoot[C]{}                                                      %                                                              %
+\fancyfoot[R]{}                          %
+\renewcommand\headrulewidth{0.4pt}                                      %
+\renewcommand\footrulewidth{0.4pt}                                      %
+%\renewcommand{\headheight}{14pt}}
+}
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Creating special column types -- mostly math types
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Start by defining some macros
+\newcolumntype{d}[1]{D{.}{\cdot}{#1}}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{,}{D{,}{,}{2}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcolumntype{R}{>{$}r<{$}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For faster processing, load Matlab syntax for listings
+\lstloadlanguages{MATLAB, [x86masm]Assembler, C++, VHDL, Perl}%
+\lstset{frame=single,                                                              % Single frame around code
+        basicstyle=\scriptsize\ttfamily,             			           % Use small true type font
+        keywordstyle=[1]\color{blue}\ttfamily,        				   % MATLAB functions bold and blue
+        keywordstyle=[2]\color{purple},         				   % MATLAB function arguments purple
+        keywordstyle=[3]\color{blue}\underbar,  			           % User functions underlined and blue
+        identifierstyle=,                       				   % Nothing special about identifiers
+                                                				   % Comments small dark green courier
+        commentstyle=\usefont{T1}{pcr}{m}{n}\color{MyDarkGreen}\scriptsize,
+        stringstyle=\color{purple},             				   % Strings are purple
+        showstringspaces=false,                 				   % Don't put marks in string spaces
+        tabsize=5,                              				   % 5 spaces per tab
+        %
+        %%% Put standard MATLAB functions not included in the default
+        %%% language here
+        morekeywords={ra,stw, addi, ldw, bge, beq, br},
+        %
+        %%% Put MATLAB function parameters here
+        morekeywords=[2]{on, off, interp},
+        %
+        %%% Put user defined functions here
+        morekeywords=[3]{FindESS, homework_example},
+        %
+        morecomment=[l][\color{blue}]{...},     % Line continuation (...) like blue comment
+        numbers=left,                           % Line numbers on left
+        firstnumber=1,                          % Line numbers start with line 1
+        numberstyle=\tiny\color{black},          % Line numbers are blue
+        stepnumber=5,                            % Line numbers go in steps of 5
+        breaklines=true,
+        breakatwhitespace=false
+        }  
+ 
+
+
+% This is used to trace down (pin point) problems
+% in latexing a document:
+%\tracingall
+\hfuzz4pt % I don't want to know about overfull hbox if < 2pt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Some tools
+\newcommand{\enterProblemHeader}[1]{\nobreak\extramarks{#1}{#1 continued on next page\ldots}\nobreak%
+                                    \nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak}%
+\newcommand{\exitProblemHeader}[1]{\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak%
+                                   \nobreak\extramarks{#1}{}\nobreak}%
+
+\newlength{\labelLength}
+\newcommand{\labelAnswer}[2]
+  {\settowidth{\labelLength}{#1}%
+   \addtolength{\labelLength}{0.25in}%
+   \changetext{}{-\labelLength}{}{}{}%
+   \noindent\fbox{\begin{minipage}[c]{\columnwidth}#2\end{minipage}}%
+   \marginpar{\fbox{#1}}%
+
+   % We put the blank space above in order to make sure this
+   % \marginpar gets correctly placed.
+   \changetext{}{+\labelLength}{}{}{}}%
+
+\newcommand{\homeworkProblemName}{}%
+\newcommand{\homeworkShortProblemName}{}
+\newcounter{homeworkProblemCounter}%
+\newenvironment{homeworkProblem}[2]
+  {\stepcounter{homeworkProblemCounter}%
+   \renewcommand{\homeworkProblemName}{#1}
+   \renewcommand{\homeworkShortProblemName}{#2}
+   \section*{\homeworkProblemName\ -- \homeworkShortProblemName}%
+   \addcontentsline{toc}{section}{\homeworkShortProblemName}%
+   \enterProblemHeader{\homeworkProblemName}}%
+  {\exitProblemHeader{\homeworkProblemName}}%
+
+\newcommand{\problemAnswer}[1]
+  {\noindent\fbox{\begin{minipage}[c]{\columnwidth}#1\end{minipage}}}%
+
+\newcommand{\problemLAnswer}[1]
+  {\labelAnswer{\homeworkProblemName}{#1}}
+
+\newcommand{\homeworkSectionName}{}%
+\newlength{\homeworkSectionLabelLength}{}%
+\newenvironment{homeworkSection}[1]%
+  {% We put this space here to make sure we're not connected to the above.
+   % Otherwise the changetext can do funny things to the other margin
+
+   \renewcommand{\homeworkSectionName}{#1}%
+   \settowidth{\homeworkSectionLabelLength}{\homeworkSectionName}%
+   \addtolength{\homeworkSectionLabelLength}{0.25in}%
+   \changetext{}{-\homeworkSectionLabelLength}{}{}{}%
+   \subsection*{\homeworkSectionName}%
+   \addcontentsline{toc}{subsection}{\homeworkSectionName}%
+   \enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]}}%
+  {\enterProblemHeader{\homeworkProblemName}%
+
+   % We put the blank space above in order to make sure this margin
+   % change doesn't happen too soon (otherwise \sectionAnswer's can
+   % get ugly about their \marginpar placement.
+   \changetext{}{+\homeworkSectionLabelLength}{}{}{}}%
+
+\newcommand{\sectionAnswer}[1]
+  {% We put this space here to make sure we're disconnected from the previous
+   % passage
+
+   \noindent\fbox{\begin{minipage}[c]{\columnwidth}#1\end{minipage}}%
+   \enterProblemHeader{\homeworkProblemName}\exitProblemHeader{\homeworkProblemName}%
+   \marginpar{\fbox{\homeworkSectionName}}%
+
+   % We put the blank space above in order to make sure this
+   % \marginpar gets correctly placed.
+}%
+   
+\newcounter{subsubsubsection}[subsubsection]
+\def\subsubsubsectionmark#1{}
+\def\thesubsubsubsection {\thesubsubsection
+     .\arabic{subsubsubsection}}
+\def\subsubsubsection{\@startsection
+     {subsubsubsection}{4}{\z@} {-3.25ex plus -1
+     ex minus -.2ex}{1.5ex plus .2ex}{\normalsize\sf}}
+% mj02r: original:
+%\def\l@subsubsubsection{\@dottedtocline{4}
+%     {4.8em}{4.2em}}
+% mj02r: for VCE reports:
+%\def\l@subsubsubsection{\@dottedtocline{4}
+%     {7em}{3.8em}}
+% mj02r, 29/12/2004: for thesis:
+\def\l@subsubsubsection{\@dottedtocline{4}
+     {11.1em}{4.6em}}
+
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{0ex}%
+   {-3.25ex plus -1ex minus -0.2ex}%
+   {1.5ex plus 0.2ex}%
+   {\normalfont\normalsize\bfseries}}
+\makeatother
+   
+% Includes a MATLAB script.
+% The first parameter is the label, which also is the name of the script
+%   without the .m.
+% The second parameter is the optional caption.
+\newcommand{\matlabscript}[2]
+  {\begin{spacing}{1}\begin{itemize}\item[]\lstinputlisting[language=MATLAB,caption=#2,label=#1]{#1.m}\end{itemize}\end{spacing}}  
+  
+\newcommand{\ccode}[2]
+  {\begin{spacing}{1}\begin{itemize}\item[]\lstinputlisting[language={C++},caption=#2,label=#1]{#1.c}\end{itemize}\end{spacing}}  
+    
+\newcommand{\assemblycode}[2]
+  {\begin{itemize}\item[]\lstinputlisting[language={[x86masm]Assembler},caption=#2,label=#1]{#1.s}\end{itemize}}
+  
+ 
+\newcommand{\vhdlcode}[2]
+  {\begin{itemize}\item[]\lstinputlisting[language={[AMS]VHDL},caption=#2,label=#1]{#1.vhd}\end{itemize}}
+
+\newcommand{\perlcode}[2]
+  {\begin{spacing}{1}\begin{itemize}\item[]\lstinputlisting[language={Perl},caption=#2,label=#1]{#1.pl}\end{itemize}\end{spacing}}
+
+\newcommand{\arduinocode}[2]
+  {\begin{spacing}{1}\begin{itemize}\item[]\lstinputlisting[language={C++},caption=#2,label=#1]{#1.pde}\end{itemize}\end{spacing}}
+  
+\newcommand{\degree}{$^{\circ}$}
+\renewcommand{\textbeta}{$\beta\ $}
+\def\tm{\leavevmode\hbox{$\rm {}^{TM}$}}
+
+
+\newcommand{\inch}{\mathrm{in}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%This sets up the counters for the figures and equations to be numbered inside their sections
+%\counterwithin{figure}{subsection}
+%\counterwithin{equation}{section}
+%\counterwithin{table}{subsection}
+%\setcounter{secnumdepth}{5}
+%\counterwithin{lst}{homeworkProblemCounter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Make title
+%\title{\vspace{2in}\textmd{\textbf{\hmwkAuthorName}}\\\normalsize\vspace{0.1in}\hmwkClass:\ \hmwkTitle \vspace{0.1in}\\Due\ on\ \hmwkDueDate\\\vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}\vspace{3in}}
+%\date{}
+%\author{}
+%\title{\vspace{2in}\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\\normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\\vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}\vspace{3in}}
+%\date{}
+%\author{\textbf{\hmwkAuthorName}}
+
+% IEEE Title
+\title{Team PICA Final Design Report}
+\date{\today}
+\author{Amy Ball, Nate Jen, Avery Sterk, Kendrick Wiersma}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PDF Metadata
+\hypersetup{pdfinfo={
+                     Title={Team 01: Final Design Report},
+                     Subject={Engineering Design},
+                     }}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\raggedright
+\setcounter{tocdepth}{4}
+\addtocontents{toc}{\protect\pagestyle{fancyplain}}
+\addtocontents{lof}{\protect\pagestyle{fancyplain}}
+\addtocontents{lot}{\protect\pagestyle{fancyplain}}
+%\addtocontents{lol}{\protect\pagestyle{fancyplain}}
+
+\begin{document}
+
+
+%\maketitle % change this to a REAL titlepage
+\begin{titlepage}
+\begin{center}
+\includegraphics[width=5in]{includes/TeamPicaLogo}
+
+{\LARGE \textbf{P}ower \textbf{I}nformation \textbf{C}ollection \textbf{A}rchitecture}
+
+\vspace{0.5in}
+
+{\LARGE Final Design Report}
+\vspace{1in}
+
+{\Large Engineering 340: Senior Design 2010-2011}
+
+{\Large May 2011} % TODO: CHANGE THIS FOR FINAL
+
+{\Large Team 01: Amy Ball, Nathan Jen, Avery Sterk, Kendrick Wiersma}
+\vspace{0.25in}
+
+\includegraphics[height=2in]{includes/CalvinLogo}
+
+\vspace{0.25in}
+
+{\Large Copyright 2011 Calvin College and Amy Ball, Nathan Jen, Avery Sterk, and Kendrick Wiersma}
+\vspace{1in}
+
+
+\end{center}
+\end{titlepage}
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+\newpage
+\pagestyle{plain}
+\tableofcontents
+\newpage
+%\thispagestyle{fancyplain}
+\listoffigures
+\listoftables
+\lstlistoflistings
+%\thispagestyle{fancyplain}
+
+\newpage
+\protect\pagestyle{mySuperFancy}
+\begin{spacing}{1.5}
+\setcounter{page}{1}
+\include{acronyms}
+\include{introduction}
+\include{Scheduling}
+\include{System_Overview}
+\include{requirements}
+\include{designGoals}
+\include{E_Meter_Section}
+\include{SSR_Section}
+\include{CircuitIdentifier}
+\include{Base_Station}
+\include{PowerSupply}
+\include{Business_Case}
+\include{partsProjectCost}
+\include{project_finances}
+\include{acknowledgements}
+\include{bibliography}
+\appendix
+\include{Scheduling_Appendix}
+\include{E_Meter_Appendix}
+\include{breaker_appendix}
+\include{base_station_appendix}
+\include{sparc_embedded_guide}
+\include{PowerSupply_appendix}
+
+\end{spacing}
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

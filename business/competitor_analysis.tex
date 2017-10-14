@@ -1,0 +1,53 @@
+\subsection{Competitor Analysis} % This has already been fixed
+This section analyzes a few products with similar features to various components of the PICA system such as Kill-A-Watt, Cent-a-Meter, The Energy Dectective, and Watts Up? Smart Circuit. The table below gives a overview of these products compared to the PICA system. %Finally, these products will be compared to the PICA system in a table.
+
+\begin{table}[htdp]
+\caption{Comparison of PICA Competitors}
+\begin{center}
+\begin{tabular}{|>{\centering}b{0.75in}|>{\raggedright}b{1.25in}|>{\raggedright}b{1in}|>{\raggedright}b{0.5in}|>{\raggedright}b{0.5in}|c|}\hline
+\rowcolor{lightgray}Product & Monitoring features & Control Features & Cost (Fixed) & Cost (Recurring) & PICA Competitor\\\hline
+Kill-A-Watt & voltage, line frequency, amperage, KWH, and current leakage & N/A & \$52 to \$99 & N/A & Ciruit-by-Circuit Monitors\\\hline 
+Cent-A- Meter & Cost of electricity, temperature, humidity, kW of demand kg/hour greenhouse gas emissions & N/A & \$140 & N/A & E-Panel Meter\\\hline 
+The Energy Detective & kW load, \$/hour & N/A & \$119.95 to \$455.80 & N/A & E-Panel Meter\\\hline
+Watts Up? Smart Circuit & Current, Voltage, kilowatts used & Remote On/Off & \$194.95 /circuit & Free to \$50.00 /month & Circuit-by-Circuit monitors\\\hline
+Smart-Watt & voltage, line frequency, amperage, KWH, current leakage, circuit load, on/off cycles & N/A & \$169 to \$249  & N/A & Circuit-by-Circuit Monitors\\\hline
+\end{tabular}
+\end{center}
+\label{tab:competition_sum}
+\end{table}%
+
+\subsubsection{Kill-A-Watt} % Keep going....
+Around the turn of the millennium P3 International introduced the Kill-A-Watt device, which they marketed as a "user-friendly power meter that enables people to calculate the cost to use their home appliances," \cite{About_P3}. According to Amazon.com these devices range in price from $52 to $99 Manufacturer Suggested Retail Price (MSRP) depending on features, most notably how many devices can be monitored simultaneously. P3 produces three models of the Kill-A-Watt devices:
+\begin{enumerate}
+\item Kill-A-Watt PS (P4320): A power strip capable of monitoring voltage, line frequency, amperage, KWH, and current leakage for up to eight devices simultaneously and includes built-in surge protection \cite{P4320_Datasheet}.
+\item Kill-A-Watt (P4400): The original Kill-A-Watt device, capable of monitoring voltage, amperage, watts used, line frequency, KWH, uptime, power factor, and reactive power for 1 device \cite{P4400_Datasheet}.
+\item Kill-A-Watt EZ (P4460): This device is functionally identical to the P4400 series except that it includes one extra feature, it can calculate how much a device costs the consumer, after being programmed with the \$/KWH provided by the power company \cite{P4460_Datasheet}.
+\end{enumerate}
+All of the Kill-A-Watt devices claim to be accurate to within 0.2\% of the actual power the monitored device uses \cite{P4320_Datasheet}\cite{P4400_Datasheet}\cite{P4460_Datasheet}. The Kill-A-Watt devices cannot replace a power meter, but simply provide a method of supplying a consumer with additional data about their power consumption.
+
+\subsubsection{Cent-a-Meter} % Keep going....
+The Australian company, Clipsal produces the Cent-a-meter also known as the Electrisave or the Owl in the UK. Clipsal only produces one version of the Cent-a-meter which displays the cost of the electricity used in the home along with the temperature and humidity \cite{Clipsal_CentAMeter}. The device can also measure kW of demand, and kg/hour of greenhouse gas emissions \cite{SmartHomeUSA}. Unlike the Kill-A-Watt, the centimeter does not accumulate any data, just displays instantaneous data on a receiver unit mounted in the home \cite{Clipsal_CentAMeter}. Clipsal does not list an MSRP for the Cent-a-meter, however SmartHome USA sells Cent-a-meter devices for \$140 \cite{SmartHomeUSA}.
+
+\subsubsection{The Energy Detective (TED)} % Keep going....
+Energy Inc., a division of 3M, recently introduced its TED (The Energy Detective) power monitor. Functionally, TED operates exactly as the meter on the exterior of a consumer's home or business but the display resides indoors in a more convenient viewing location. Energy Inc. currently produces two series of the TED device:
+\begin{enumerate}
+\item TED1000 series: The TED1000 devices monitor current energy consumption in killowatts, and current energy cost in \$/hour, and log this data for 13 months to predict energy use for the current billing cycle. TED1000 devices can integrate with a proprietary software package, Footprints, provided by Energy Inc. to visually display usage data \cite{TED1000}. TED1000 series devices range in price from \$119.95 to \$229.95 depending on the amp-rating of the service installation \cite{TED1000Store}.
+\item TED5000 series: The TED5000 sought to improve upon the TED1000 series by extending the functionality of the TED devices. The largest selling point for the TED5000 is integration with the Google Power service to track power usage data on the web \cite{TED5000}. TED5000 series units range in price from \$239.95 to \$455.80 depending on from how many measurement units the device gathers data \cite{TED5000Store}.
+\end{enumerate}
+
+\subsubsection{Watts Up?}% Keep going....
+In 1997 Electronic Educational Devices Inc. introduced the Watts Up? product line to the education market. The product immediately became a hit, and soon utility companies across the United States began to take notice \cite{WattsAbout}. EED markets the Smart Circuit devices as a replacement for traditional circuit breaker devices for 100V to 250V, 20 amp 50/60Hz circuits \cite{WattsUpDatasheet}. Each Smart Circuit contains a built in web-server that allows for aggregation of collected data at a maximum rate of once per second \cite{WattsUpDatasheet}. These Smart Circuits are typically installed into a standard panel enclosure box, similar to standard circuit breakers, mounting directly to the industry-standard DIN rail inside the enclosure\cite{WattsUpDatasheet}. Alternatively, if needed at one local outlet, the Smart Circuit can be housed in a standard double gang electrical box \cite{WattsUpDatasheet}. Each Smart Circuit device can turn itself on or off when it receives a certain remote-control signal or when it detects one of many programmable stimuli. This self-waking feature makes these devices ideal for home-automation projects \cite{WattsUpDatasheet}.
+
+A single Smart Circuit, capable of controlling one circuit, costs \$194.95, with enclosures for one, five, or ten Smart Circuits devices going for \$325.95, \$1495.95, and \$2495.95 respectively \cite{WattsUpDatasheet}. A basic account, to view aggregated data and control the devices is free for residential use, but data rates, historical data and devices rules are limited \cite{WattsUpServices}. A top-tier account, featuring the fastest update time, 1 second, up to 25 meters, 1 year of archival data, and 25 rules costs \$50.00 a month \cite{WattsUpServices}.
+
+\subsubsection{Smart-Watt} % Keep going....
+The Smart-Watt device from Smartworks Inc. takes a similar approach to the Kill-A-Watt device in metering a single device at a time, but monitors much more information including circuit load over any period of time, and number of on/off cycles the attached device undergoes \cite{SmartWattBrochure}. The biggest advantage to the Smart-Watt devices comes from the proprietary network Smartworks has developed for their devices. Each device attaches to a local network where a central server collects and collates all the data \cite{SmartWattBrochure}. The Smart-Watt comes in two versions, one for \ac{IEC} plugs and receptacles and one for \ac{NEMA} plugs and receptacles. Both devices are similarly priced ranging from \$169 to \$249 depending on the current rating \cite{SmartWattBrochure}.
+
+\subsubsection{Standard Power Meter} % Keep going....
+Most homes or businesses attached to the electric grid are metered using a standard analogue power meter. This device provided by the power company, measures the amount of electrical energy consumed over a period of time. Typically, a power meter records in billing units, such as KWH. Each meter requires periodic readings based on the billing cycle of the power company; it is safe to assume that meters are read approximately once per month. In order to read the meter, an employee of the power company will physically go out to the meter and record usage data.
+
+\subsubsection{Nonintrusive Appliance Load Monitor} % Keep going....
+All of the products discussed here use a technique known as \ac{NILM} to monitor power consumption without affecting the load on the circuit \cite{NILM}. However, some more sophisticated products in this area use \ac{NILM} to estimate the number of individual loads on the circuit \cite{NALM}. If the research in this field proves that \ac{NILM} provides accurate and useful data, devices based on the \ac{NILM} technology would have a large advantage over other single-device power monitors, as such a device could be inserted into the feeder lines from the utility company and monitor all devices in the entire installation from a single point. Research turned up no significant products that claim to be capable of monitoring multiple loads on a circuit from a single point on the circuit. Thus this section is included to provide information, but does not represent a viable competitor in the market just yet.
+
+\subsubsection{PICA Competitors Comparison} % Keep going....
+In order to better understand the competition in the marketplace table \ref{tab:competition_sum} reproduces the information laid out above as a comparative table. The column on the far right side describes the PICA component that most directly competes with the product listed in the left column.

@@ -1,0 +1,1017 @@
+\section{Embedded Linux from Scratch for the LEON3 SPARC}
+\label{sec:sparc_embedded_guide}
+\lstset{frame=single,language=bash,basicstyle=\small\ttfamily}
+ This guide is adapted from \url{http://cross-lfs.org/view/clfs-embedded/arm} to work on the LEON3
+ Sparc-V8-compatible hardware. It assumes that the SPARC processor has an \ac{FPU} built into it.
+
+
+This guide was originally tested and performed on Ubuntu 10.04 LTS. Hence, \texttt{/media} for the base of the
+mountpoint directory.
+
+
+\subsection{Setting up the build environment}
+ \subsubsection{Make a new partition}
+Use the program ``GParted'' to make an Ext3 partition of 2GB or more, and label it ``CLFS''. Non-Ubuntu
+systems will probably have their own particular way of doing this that depends on where disks are mounted.
+ \subsubsection{Mount the new partition}
+ \begin{itemize}
+  \item Mount the partition: see your distribution for details. On Ubuntu, click "Places > CLFS" in the GNOME
+    Panel.
+  \item Set up an environment variable that points to the partition
+\begin{lstlisting}
+export CLFS=/media/CLFS
+\end{lstlisting}
+  \item Create the source directories (as root)
+    \begin{lstlisting}
+sudo mkdir -v $CLFS/sources
+sudo chmod -v a+wt $CLFS/sources
+\end{lstlisting}
+ \end{itemize}
+\subsubsection{Download the CLFS-embedded sources}
+ \begin{itemize}
+  \item Enter the sources directory
+  \begin{lstlisting}
+cd $CLFS/sources
+  \end{lstlisting}
+  \item Make a list of all the sources
+  \begin{lstlisting}
+cat > embedded_list.txt << EOF
+http://ftp.gnu.org/gnu/binutils/binutils-2.21.tar.bz2
+http://busybox.net/downloads/busybox-1.17.3.tar.bz2
+http://cross-lfs.org/files/packages/embedded-0.0.1/clfs-embedded-bootscripts-1.0-pre5.tar.bz2
+http://downloads.sourceforge.net/e2fsprogs/e2fsprogs-1.41.14.tar.gz
+ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.5.2/gcc-4.5.2.tar.bz2
+http://ftp.gnu.org/gnu/gmp/gmp-5.0.1.tar.bz2
+http://cross-lfs.org/files/packages/embedded-0.0.1/iana-etc-2.30.tar.bz2
+http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.36.3.tar.bz2
+http://www.multiprecision.org/mpc/download/mpc-0.8.2.tar.gz
+http://gforge.inria.fr/frs/download.php/27105/mpfr-3.0.0.tar.bz2
+http://www.uclibc.org/downloads/uClibc-0.9.31.tar.bz2
+http://downloads.sourceforge.net/libpng/zlib-1.2.3.tar.gz EOF
+  \end{lstlisting}
+  \item Download these packages: (\texttt{--no-clobber} lets you skip what you already have)
+  \begin{lstlisting}
+wget --no-clobber -i embedded_list.txt
+  \end{lstlisting}
+
+  \item Make a list of the Leon3-specific files:
+  \begin{lstlisting}
+cat > leon3_list.txt << EOF
+ftp://gaisler.com/gaisler.com/linux/linux-2.6/kernel/mklinuximg-2.6.36-1.0.8.tar.bz2
+ftp://gaisler.com/gaisler.com/linux/linux-2.6/kernel/leon-linux-2.6-2.6.36.3-1.0.1.tar.bz2
+ftp://gaisler.com/gaisler.com/linux/linux-2.6/kernel/grlib-linux-drvpkg-1.0.0.tar.bz2
+EOF
+  \end{lstlisting}
+
+  \item Download these files, too.
+  \begin{lstlisting}
+wget --no-clobber -i leon3_list.txt
+  \end{lstlisting}
+
+  \item Make a list of all patches from CLFS:
+  \begin{lstlisting}
+cat > patch_list.txt << EOF
+http://patches.cross-lfs.org/embedded-dev/busybox-1.17.3-config-1.patch
+http://patches.cross-lfs.org/embedded-dev/busybox-1.17.3-fixes-1.patch
+http://patches.cross-lfs.org/embedded-dev/iana-etc-2.30-update-1.patch
+http://patches.cross-lfs.org/embedded-dev/uClibc-0.9.31-configs-2.patch
+EOF
+  \end{lstlisting}
+  \item Download the patches
+  \begin{lstlisting}
+wget --no-clobber -i patch_list.txt
+  \end{lstlisting}
+\end{itemize}
+
+ \subsubsection{Add the CLFS user}
+ \begin{itemize}
+   \item Become root to administer users, and keep CLFS set
+\begin{lstlisting}
+sudo -s CLFS=$CLFS
+\end{lstlisting}
+   \item (As root) Create the group and user "clfs"
+     \begin{lstlisting}
+groupadd clfs
+useradd -s /bin/bash -g clfs -m -k /dev/null clfs
+passwd clfs
+     \end{lstlisting}
+  \item (As root) Give the clfs user access to \$CLFS -- Note: \$CLFS should still be set. This should not error.
+    \begin{lstlisting}
+chown -Rv clfs ${CLFS}
+    \end{lstlisting}
+ \item Surrender root privileges
+\begin{lstlisting}
+exit
+\end{lstlisting}
+ \item Become the clfs user
+   \begin{lstlisting}
+su - clfs
+   \end{lstlisting}
+ \end{itemize}
+ \subsubsection{Configuring the clfs user}
+ \begin{itemize}
+  \item Bash profile (when in a login shell)
+    \begin{lstlisting}
+cat > ~/.bash_profile << "EOF"
+exec env -i HOME=${HOME} TERM=${TERM} PS1='\u:\w\$ ' /bin/bash
+EOF
+    \end{lstlisting}
+  \item Bash rc (for non-login shells) 
+    \begin{lstlisting}
+cat > ~/.bashrc << "EOF"
+set +h
+umask 022
+CLFS=/media/CLFS
+LC_ALL=POSIX
+PATH=${CLFS}/cross-tools/bin:/bin:/usr/bin
+export CLFS LC_ALL PATH
+EOF
+    \end{lstlisting}
+  \item Load the new bash profile
+    \begin{lstlisting}
+~/.bash_profile
+    \end{lstlisting}
+
+ \end{itemize}
+ \subsubsection{Preparing the filesystem}
+\begin{itemize}
+  \item Create directories necessary for Linux to work
+\begin{lstlisting}
+mkdir -pv ${CLFS}/{bin,boot,dev,{etc/,}opt,home,lib/{firmware,modules},mnt}
+mkdir -pv ${CLFS}/{proc,media/{floppy,cdrom},sbin,srv,sys}
+mkdir -pv ${CLFS}/var/{lock,log,mail,run,spool}
+mkdir -pv ${CLFS}/var/{opt,cache,lib/{misc,locate},local}
+install -dv -m 0750 ${CLFS}/root
+install -dv -m 1777 ${CLFS}{/var,}/tmp
+mkdir -pv ${CLFS}/usr/{,local/}{bin,include,lib,sbin,src}
+mkdir -pv ${CLFS}/usr/{,local/}share/{doc,info,locale,man}
+mkdir -pv ${CLFS}/usr/{,local/}share/{misc,terminfo,zoneinfo}
+mkdir -pv ${CLFS}/usr/{,local/}share/man/man{1,2,3,4,5,6,7,8}
+for dir in ${CLFS}/usr{,/local}; do
+  ln -sv share/{man,doc,info} ${dir}
+done
+\end{lstlisting}
+  \item Make the cross-tools directories
+    \begin{lstlisting}
+install -dv $CLFS/cross-tools{,/bin}
+    \end{lstlisting}
+ \item Set up the necessary files for Linux
+ \subitem Mtab symlink (list of mounted file systems)
+ \begin{lstlisting}
+ln -svf ../proc/mounts ${CLFS}/etc/mtab
+\end{lstlisting}
+  \subitem Passwd (list of users)
+\begin{lstlisting}
+cat > ${CLFS}/etc/passwd << "EOF"
+root::0:0:root:/root:/bin/ash
+daemon:x:2:6:daemon:/sbin:/bin/false
+EOF
+\end{lstlisting}
+  \subitem Group (list of groups)
+\begin{lstlisting}
+cat > ${CLFS}/etc/group << "EOF"
+root:x:0:
+bin:x:1:
+sys:x:2:
+kmem:x:3:
+tty:x:4:
+tape:x:5:
+daemon:x:6:
+floppy:x:7:
+disk:x:8:
+lp:x:9:
+dialout:x:10:
+audio:x:11:
+video:x:12:
+utmp:x:13:
+usb:x:14:
+cdrom:x:15:
+EOF
+\end{lstlisting}
+  \subitem Log files for login, agetty, and init
+  \begin{lstlisting}
+touch ${CLFS}/var/run/utmp ${CLFS}/var/log/{btmp,lastlog,wtmp}
+chmod -v 664 ${CLFS}/var/run/utmp ${CLFS}/var/log/lastlog
+  \end{lstlisting}
+
+\end{itemize}
+
+
+\subsection{Making the Cross-Compile Tools}
+ \subsubsection{Setting CFLAGS}
+ \begin{lstlisting}
+unset CFLAGS
+unset CXXFLAGS
+echo unset CFLAGS >> ~/.bashrc
+echo unset CXXFLAGS >> ~/.bashrc
+\end{lstlisting}
+ \subsubsection{Setting build settings}
+\emph{Note: the CPU setting below was taken from the post at
+\url{http://gcc.gnu.org/ml/gcc/2010-11/msg00440.html}}
+\begin{itemize}
+\item Temporarily
+  \begin{lstlisting}
+export CLFS_HOST=$(echo ${MACHTYPE} | sed "s/-[^-]*/-cross/")
+export CLFS_TARGET="sparc-embedded-linux-gnu"
+export CLFS_ARCH="sparc"
+export CLFS_CPU="sparchfleonv8"
+export CLFS_FLOAT="hard"
+  \end{lstlisting}
+\item Persistently (you can log out and this will re-load on login)
+  \begin{lstlisting}
+echo export CLFS_HOST=\""$CLFS_HOST\"" >> ~/.bashrc
+echo export CLFS_TARGET=\""$CLFS_TARGET\"" >> ~/.bashrc
+echo export CLFS_ARCH=\""$CLFS_ARCH\"" >> ~/.bashrc
+echo export CLFS_CPU=\""$CLFS_CPU\"" >> ~/.bashrc
+echo export CLFS_FLOAT=\""$CLFS_FLOAT\"" >> ~/.bashrc
+  \end{lstlisting}
+\end{itemize}
+ \subsubsection{Install the Linux headers}
+ \begin{itemize}
+  \item Unpack
+    \begin{lstlisting}
+cd $CLFS/sources
+tar xf linux-2.6.36.3.tar.bz2
+tar xf leon-linux-2.6-2.6.36.3-1.0.1.tar.bz2
+tar xf grlib-linux-drvpkg-1.0.0.tar.bz2
+    \end{lstlisting}
+  \item Apply Leon patches
+    \begin{lstlisting}
+cd linux-2.6.36.3
+for file in `ls ../leon-linux-2.6-2.6.36.3-1.0.1/patches/*.patch`; do
+  echo $file; patch -Np1 < $file; sleep 0.5; done
+cp -r ../grlib-linux-drvpkg-1.0.0/kernel/drivers .
+patch -p1 < drivers/grlib/add_grlib_tree.patch
+if test $? -ne 0; then
+  echo "obj-\$(CONFIG_SPARC_LEON) += grlib/"; fi >> drivers/Makefile
+    \end{lstlisting}
+  \item Install headers
+    \begin{lstlisting}
+make mrproper
+make ARCH=${CLFS_ARCH} headers_check
+make ARCH=${CLFS_ARCH} INSTALL_HDR_PATH=dest headers_install
+cp -rv dest/include/* ${CLFS}/usr/include
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources
+rm -rf linux-2.6.36.3
+rm -rf leon-linux-2.6-2.6.36.3-1.0.1
+rm -rf grlib-linux-drvpkg-1.0.0
+    \end{lstlisting}
+ \end{itemize}
+
+ \subsubsection{Install GMP-5.0.1}
+ \begin{lstlisting}
+cd $CLFS/sources
+ \end{lstlisting}
+ \begin{itemize}
+\item Unpack
+  \begin{lstlisting}
+tar xf gmp-5.0.1.tar.bz2
+  \end{lstlisting}
+
+\item Configure
+  \begin{lstlisting}
+cd gmp-5.0.1
+CPPFLAGS=-fexceptions ./configure --prefix=${CLFS}/cross-tools
+  \end{lstlisting}
+\item Make, time the result (2m11s for me.)
+\begin{lstlisting}
+time make 
+\end{lstlisting}
+\item (Optional) Check that it's correct (2m46s for me)
+  \begin{lstlisting}
+time make check
+  \end{lstlisting}
+\item Install
+  \begin{lstlisting}
+make install
+  \end{lstlisting}
+\item Cleanup
+  \begin{lstlisting}
+cd $CLFS/sources
+rm -rf gmp-5.0.1
+  \end{lstlisting}
+ \end{itemize}
+ \subsubsection{MPFR-3.0.0}
+ \begin{itemize}
+  \item Unpack
+    \begin{lstlisting}
+tar xf mpfr-3.0.0.tar.bz2
+cd mpfr-3.0.0
+    \end{lstlisting}
+  \item Configure
+   \begin{lstlisting}
+LDFLAGS="-Wl,-rpath,${CLFS}/cross-tools/lib" \
+./configure --prefix=${CLFS}/cross-tools --enable-shared \
+  --with-gmp=${CLFS}/cross-tools
+   \end{lstlisting}
+  \item Make and install (1m29s for me)
+   \begin{lstlisting}
+time { make && make install; }
+   \end{lstlisting}
+  \item Cleanup
+   \begin{lstlisting}
+cd $CLFS/sources
+rm -rf mpfr-3.0.0
+    \end{lstlisting}
+ \end{itemize}
+
+ \subsubsection{MPC-0.8.2}
+ \begin{itemize}
+  \item Unpack 
+   \begin{lstlisting}
+tar xf mpc-0.8.2.tar.gz
+cd mpc-0.8.2
+   \end{lstlisting}
+  \item Configure
+    \begin{lstlisting}
+LDFLAGS="-Wl,-rpath,${CLFS}/cross-tools/lib" \
+  ./configure --prefix=${CLFS}/cross-tools \
+  --with-gmp=${CLFS}/cross-tools \
+  --with-mpfr=${CLFS}/cross-tools
+    \end{lstlisting}
+  \item Build and install (About 21 seconds)
+    \begin{lstlisting}
+time { make && make install; }
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources rm -rf mpc-0.8.2
+    \end{lstlisting}
+ \end{itemize}
+
+\subsubsection{Cross Binutils-2.21}
+\begin{itemize}
+  \item Extract
+    \begin{lstlisting}
+cd $CLFS/sources
+tar xf binutils-2.21.tar.bz2
+    \end{lstlisting}
+
+  \item Make a temporary directory
+    \begin{lstlisting}
+mkdir binutils-cross 
+cd binutils-cross
+    \end{lstlisting}
+
+  \item Configure
+    \begin{lstlisting}
+../binutils-2.21/configure --prefix=${CLFS}/cross-tools \
+  --target=${CLFS_TARGET} --with-sysroot=${CLFS} --disable-nls \
+  --enable-shared --disable-multilib
+    \end{lstlisting}
+  \item Build and install (5m11s)
+    \begin{lstlisting}
+time { make configure-host && make && make install; }
+    \end{lstlisting}
+  \item Post-install maintenance
+    \begin{lstlisting}
+cp -v ../binutils-2.21/include/libiberty.h ${CLFS}/usr/include
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources && rm -rf binutils-2.21 binutils-cross
+    \end{lstlisting}
+\end{itemize}
+
+\subsubsection{Cross GCC - 4.5.2 -- Static}
+ \begin{itemize}
+  \item Extract
+    \begin{lstlisting}
+cd $CLFS/sources tar xf gcc-4.5.2.tar.bz2
+    \end{lstlisting}
+  \item Make a temporary directory
+    \begin{lstlisting}
+mkdir -v gcc-cross-static cd gcc-cross-static
+    \end{lstlisting}
+  \item Configure
+    \begin{lstlisting}
+AR=ar LDFLAGS="-Wl,-rpath,${CLFS}/cross-tools/lib" \
+  ../gcc-4.5.2/configure --prefix=${CLFS}/cross-tools \
+  --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
+  --with-sysroot=${CLFS} --disable-nls --disable-shared \
+  --with-mpfr=${CLFS}/cross-tools --with-gmp=${CLFS}/cross-tools \
+  --with-mpc=${CLFS}/cross-tools --without-headers --with-newlib \
+  --disable-decimal-float --disable-libgomp --disable-libmudflap \
+  --disable-libssp --disable-threads --enable-languages=c \
+  --disable-multilib --with-float=${CLFS_FLOAT}
+    \end{lstlisting}
+  \item  Build (13m4s)
+    \begin{lstlisting}
+time make all-gcc all-target-libgcc
+    \end{lstlisting}
+  \item Install (4 seconds) time
+    \begin{lstlisting}
+make install-gcc install-target-libgcc
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources && rm -rf gcc-4.5.2 gcc-cross-static
+    \end{lstlisting}
+\end{itemize}
+
+\subsubsection{uClibc-0.9.31}
+\begin{itemize}
+  \item Extract
+    \begin{lstlisting}
+tar xf uClibc-0.9.31.tar.bz2
+    \end{lstlisting}
+  \item Patch cd uClibc-0.9.31
+    \begin{lstlisting}
+patch -Np1 -i ../uClibc-0.9.31-configs-2.patch
+cp -v clfs/config.arm.big .config
+    \end{lstlisting}
+  \item Configure
+Set arch=sparc (v8 will be selected automatically), and set FPU to be what you have in the Leon (Y/N)
+   \begin{lstlisting}
+make menuconfig
+   \end{lstlisting}
+  \item Build (1m39s)
+    \begin{lstlisting}
+time make
+    \end{lstlisting}
+  \item Install
+    \begin{lstlisting}
+make PREFIX=${CLFS} install
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources && rm -rf uClibc-0.9.31
+    \end{lstlisting}
+ \end{itemize}
+
+ \subsubsection{GCC-4.5.2 -- Full}
+  \begin{itemize}
+  \item Extract
+    \begin{lstlisting}
+cd $CLFS/sources tar xf gcc-4.5.2.tar.bz2
+    \end{lstlisting}
+  \item Make build directories
+   \begin{lstlisting}
+mkdir gcc-cross-full cd gcc-cross-full
+   \end{lstlisting}
+  \item Configure
+   \begin{lstlisting}
+AR=ar LDFLAGS="-Wl,-rpath,${CLFS}/cross-tools/lib" \
+  ../gcc-4.5.2/configure --prefix=${CLFS}/cross-tools \
+  --build=${CLFS_HOST} --target=${CLFS_TARGET} --host=${CLFS_HOST} \
+  --with-sysroot=${CLFS} --disable-nls --enable-shared \
+  --enable-languages=c,c++ --enable-c99 --enable-long-long \
+  --with-mpfr=${CLFS}/cross-tools --with-gmp=${CLFS}/cross-tools \
+  --with-mpc=${CLFS}/cross-tools --disable-multilib \
+  --with-float=${CLFS_FLOAT}
+   \end{lstlisting}
+  \item Build (20m02s)
+   \begin{lstlisting}
+time make
+   \end{lstlisting}
+  \item Install
+   \begin{lstlisting}
+make install
+   \end{lstlisting}
+  \item Cleanup
+   \begin{lstlisting}
+cd $CLFS/sources && rm -rf gcc-cross-full gcc-4.5.2
+   \end{lstlisting}
+ \end{itemize}
+
+
+\subsection{Building the System}
+\subsubsection{Set up cross-compiling variables for convenience}
+\begin{lstlisting}
+echo export CC=\""${CLFS_TARGET}-gcc\"" >> ~/.bashrc
+echo export CXX=\""${CLFS_TARGET}-gcc\"" >> ~/.bashrc
+echo export AR=\""${CLFS_TARGET}-ar\"" >> ~/.bashrc
+echo exportAS=\""${CLFS_TARGET}-as\"" >> ~/.bashrc
+echo export LD=\""${CLFS_TARGET}-ld\"" >> ~/.bashrc
+echo export RANLIB=\""${CLFS_TARGET}-ranlib\"" >> ~/.bashrc
+echo export READELF=\""${CLFS_TARGET}-readelf\"" >> ~/.bashrc
+echo export STRIP=\""${CLFS_TARGET}-strip\"" >> ~/.bashrc
+source ~/.bashrc
+\end{lstlisting}
+
+\subsubsection{busybox-1.17.3}
+\begin{itemize}\item 
+  \item Extract
+    \begin{lstlisting}
+cd $CLFS/sources tar xf busybox-1.17.3.tar.bz2
+    \end{lstlisting}
+  \item Patch
+    \begin{lstlisting}
+cd busybox-1.17.3
+patch -Np1 -i ../busybox-1.17.3-fixes-1.patch
+patch -Np1 -i ../busybox-1.17.3-config-1.patch
+    \end{lstlisting}
+  \item Configuration Check
+Should not require input, just checks that the configuration is acceptable
+\begin{lstlisting}
+cp -v clfs/config .config make oldconfig
+\end{lstlisting}
+  \item Build
+    \begin{lstlisting}
+make CROSS_COMPILE="${CLFS_TARGET}-"
+    \end{lstlisting}
+  \item Install
+    \begin{lstlisting}
+make CROSS_COMPILE="${CLFS_TARGET}-" CONFIG_PREFIX="${CLFS}" install
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources && rm -rf busybox-1.17.3
+    \end{lstlisting}
+\end{itemize}
+
+ \subsubsection{e2fsprogs-1.41.14}
+  \begin{itemize}
+  \item Extract
+    \begin{lstlisting}
+tar xf e2fsprogs-1.41.14.tar.gz
+cd e2fsprogs-1.41.14
+    \end{lstlisting}
+  \item Make an internal build directory
+    \begin{lstlisting}
+mkdir -v build
+cd build
+    \end{lstlisting}
+  \item Configure
+    \begin{lstlisting}
+CC="${CC} -Os" ../configure --prefix=/usr --with-root-prefix="" \
+  --host=${CLFS_TARGET} --disable-tls --disable-debugfs \
+  --disable-e2initrd-helper --disable-nls \
+    \end{lstlisting}
+  \item Build (53 seconds)
+    \begin{lstlisting}
+time make
+    \end{lstlisting}
+  \item Install
+    \begin{lstlisting}
+make DESTDIR=${CLFS} install install-libs
+    \end{lstlisting}
+  \item Cleanup
+    \begin{lstlisting}
+cd $CLFS/sources && rm -rf e2fsprogs-1.41.14
+    \end{lstlisting}
+  \end{itemize}
+ \subsubsection{iana-etc-2.30}
+  \begin{itemize}
+  \item Extract
+\begin{lstlisting}
+tar xf iana-etc-2.30.tar.bz2
+cd iana-etc-2.30
+\end{lstlisting}
+  \item Patch
+\begin{lstlisting}
+patch -Np1 -i ../iana-etc-2.30-update-1.patch
+\end{lstlisting}
+  \item Make information up-to-date
+\begin{lstlisting}
+make get
+\end{lstlisting}
+  \item Build ($<$1 second)
+\begin{lstlisting}
+time make
+\end{lstlisting}
+  \item Install
+\begin{lstlisting}
+make DESTDIR=${CLFS} install
+\end{lstlisting}
+  \item Cleanup
+\begin{lstlisting}
+cd $CLFS/sources && rm -rf iana-etc-2.30
+\end{lstlisting}
+ \end{itemize}
+ \subsubsection{zlib-1.2.3}
+ \begin{itemize}
+  \item Extract
+\begin{lstlisting}
+tar xf zlib-1.2.3.tar.gz
+cd zlib-1.2.3
+\end{lstlisting}
+  \item Patch
+\begin{lstlisting}
+cp configure{,.orig}
+sed -e 's/-O3/-Os/g' configure.orig > configure
+\end{lstlisting}
+  \item Configure
+\begin{lstlisting}
+./configure --prefix=/usr --shared
+\end{lstlisting}
+  \item Build ($<$5 seconds)
+\begin{lstlisting}
+time make
+\end{lstlisting}
+  \item Install
+\begin{lstlisting}
+make prefix=${CLFS}/usr install
+mv -v ${CLFS}/usr/lib/libz.so.* ${CLFS}/lib
+ln -svf ../../lib/libz.so.1 ${CLFS}/usr/lib/libz.so
+\end{lstlisting}
+  \item Cleanup
+\begin{lstlisting}
+cd $CLFS/sources && rm -rf zlib-1.2.3
+\end{lstlisting}
+\end{itemize}
+ \subsubsection{Create the fstab file}
+\begin{lstlisting}
+cat > ${CLFS}/etc/fstab << "EOF"
+# Begin /etc/fstab
+# This assumes that your CF card has Ext3 on partition 1
+#    and swap on partition 2.
+# file system mount-point type   options         dump fsck
+#                                                     order
+/dev/sda1     /           ext3   defaults        1    1
+/dev/sda2     swap        swap   pri=1           0    0
+proc          /proc       proc   defaults        0    0
+sysfs         /sys        sysfs  defaults        0    0
+devpts        /dev/pts    devpts gid=4,mode=620  0    0
+shm           /dev/shm    tmpfs  defaults        0    0
+# End /etc/fstab
+EOF
+\end{lstlisting}
+ \subsubsection{Compile the Linux kernel}
+ \begin{itemize}
+  \item Extract
+\begin{lstlisting}
+cd $CLFS/sources
+tar xf linux-2.6.36.3.tar.bz2
+tar xf leon-linux-2.6-2.6.36.3-1.0.1.tar.bz2
+tar xf grlib-linux-drvpkg-1.0.0.tar.bz2
+tar xf mklinuximg-2.6.36-1.0.8.tar.bz2
+\end{lstlisting}
+  \item Apply Leon patches
+\begin{lstlisting}
+cd linux-2.6.36.3
+for file in `ls ../leon-linux-2.6-2.6.36.3-1.0.1/patches/*.patch`; do
+  echo $file; patch -Np1 < $file; done
+cp -r ../grlib-linux-drvpkg-1.0.0/kernel/drivers .
+patch -p1 < drivers/grlib/add_grlib_tree.patch
+if test $? -ne 0; then
+  echo "obj-\$(CONFIG_SPARC_LEON) += grlib/"; fi >> drivers/Makefile
+\end{lstlisting}
+  \item Prepare source
+\begin{lstlisting}
+make mrproper
+\end{lstlisting}
+  \item Configure -- don't make modules.
+\begin{lstlisting}
+make ARCH=${CLFS_ARCH} CROSS_COMPILE="${CLFS_TARGET}-" menuconfig
+\end{lstlisting}
+  \item Build
+\begin{lstlisting}
+time make ARCH=${CLFS_ARCH} CROSS_COMPILE=${CLFS_TARGET}- zImage
+\end{lstlisting}
+  \item Make the GRMON image
+Look up the MAC address of your device's ethernet port, then substitute it for the 001122334455 below.
+\begin{lstlisting}
+cd ${CLFS}/sources/mklinuximg-2.6.36-1.0.8
+sed -i "s@sparc-linux-@$CLFS_TARGET-@g" mklinuximg
+./mklinuximg ../linux-2.6.36.3/arch/${CLFS_ARCH}/boot/image image.dsu \
+  -cmdline "console=ttyS0,38400 root=/dev/sda1" -ethmac 001122334455
+cp image.dsu ${CLFS}/boot/
+cd ../linux-2.6.36.3
+\end{lstlisting}
+  \item Install the kernel
+\begin{lstlisting}
+cp arch/${CLFS_ARCH}/boot/uImage ${CLFS}/boot/clfskernel-2.6.36.3
+cp System.map ${CLFS}/boot/System.map-2.6.36.3
+cp .config ${CLFS}/boot/config-2.6.36.3
+\end{lstlisting}
+  \item Cleanup
+\begin{lstlisting}
+cd $CLFS/sources
+rm -rf linux-2.6.36.3 leon-linux-2.6-2.6.36.3-1.0.1 grlib-linux-drvpkg-1.0.0
+\end{lstlisting}
+\end{itemize}
+ \subsubsection{Giving control to root}
+\begin{itemize}
+  \item Become root
+\begin{lstlisting}
+su -s CLFS=\$CLFS"
+\end{lstlisting}
+  \item Change the ownership of all of \$CLFS
+\begin{lstlisting}
+chown -Rv root:root ${CLFS}
+\end{lstlisting}
+  \item Switch a few to another group
+\begin{lstlisting}
+chgrp -v utmp ${CLFS}/var/run/utmp ${CLFS}/var/log/lastlog
+\end{lstlisting}
+  \item Create the two most important nodes
+\begin{lstlisting}
+mknod -m 0666 ${CLFS}/dev/null c 1 3
+mknod -m 0600 ${CLFS}/dev/console c 5 1
+\end{lstlisting}
+\end{itemize}	
+ \subsubsection{CLFS-Bootscripts-1.0-pre5}
+ \begin{itemize}
+  \item Extract
+\begin{lstlisting}
+cd ${CLFS}/sources
+tar xf clfs-embedded-bootscripts-1.0-pre5.tar.bz2
+cd clfs-embedded-bootscripts-1.0-pre5
+\end{lstlisting}
+  item Install
+\begin{lstlisting}
+mkdir ${CLFS}/etc/rc.d
+mkdir ${CLFS}/etc/rc.d/{init.d,start,stop}
+make DESTDIR=${CLFS} install-bootscripts
+\end{lstlisting}
+  \item Cleanup
+\begin{lstlisting}
+cd ${CLFS}/sources && rm -rf clfs-embedded-bootscripts-1.0-pre5
+\end{lstlisting}
+\end{itemize}
+ \subsubsection{mdev}
+ \begin{itemize}
+  \item Fill the file
+\begin{lstlisting}
+cat > ${CLFS}/etc/mdev.conf << "EOF"
+# /etc/mdev/conf
+# Symlinks:
+# Syntax: %s -> %s
+
+MAKEDEV -> ../sbin/MAKEDEV
+/proc/core -> kcore
+fd -> /proc/self/fd
+mcdx -> mcdx0
+radio -> radio0
+ram -> ram1
+sbpcd -> sbpcd0
+sr0 -> scd0
+sr1 -> scd1
+sr10 -> scd10
+sr11 -> scd11
+sr12 -> scd12
+sr13 -> scd13
+sr14 -> scd14
+sr15 -> scd15
+sr16 -> scd16
+sr2 -> scd2
+sr3 -> scd3
+sr4 -> scd4
+sr5 -> scd5
+sr6 -> scd6
+sr7 -> scd7
+sr8 -> scd8
+sr9 -> scd9
+stderr -> fd/2
+stdin -> fd/0
+stdout -> fd/1
+
+# Remove these devices, if using a headless system
+# You will see an error mdev: Bad line 35
+vbi -> vbi0
+vcs -> vcs0
+vcsa -> vcsa0
+video -> video0
+# Stop Remove for headless system
+
+# Devices:
+# Syntax: %s %d:%d %s
+# devices user:group mode
+
+null 0:0 777
+zero 0:0 666
+
+urandom 0:0 444
+
+console 0:5 0600
+fd0 0:11 0660
+hdc 0:6 0660
+kmem 0:9 000
+mem 0:9 0640
+port 0:9 0640
+ptmx 0:5 0660
+tun[0-9]* 0:0 0640 =net/
+
+sda* 0:6 0660
+sdb* 0:6 0660
+hda* 0:6 0660
+hdb* 0:6 0660
+
+tty 0:5 0660
+tty0* 0:5 0660
+tty1* 0:5 0660
+tty2* 0:5 0660
+tty3* 0:5 0660
+tty4* 0:5 0660
+tty5* 0:5 0660
+tty6* 0:5 0660
+
+ttyS* 0:20 640
+EOF
+\end{lstlisting}
+\end{itemize}
+ \subsubsection{Profile}
+\begin{itemize}
+  \item Create the file
+\begin{lstlisting}
+cat > ${CLFS}/etc/profile << "EOF"
+# /etc/profile
+
+# Set the initial path
+export PATH=/bin:/usr/bin
+
+if [ `id -u` -eq 0 ] ; then
+        PATH=/bin:/sbin:/usr/bin:/usr/sbin
+        unset HISTFILE
+fi
+
+# Setup some environment variables.
+export USER=`id -un`
+export LOGNAME=$USER
+export HOSTNAME=`/bin/hostname`
+export HISTSIZE=1000
+export HISTFILESIZE=1000
+export PAGER='/bin/more '
+export EDITOR='/bin/vi'
+
+# End /etc/profile
+EOF
+\end{lstlisting}
+\end{itemize}
+ \subsubsection{Inittab}
+\begin{lstlisting}
+cat > ${CLFS}/etc/inittab << "EOF"
+# /etc/inittab
+
+::sysinit:/etc/rc.d/startup
+
+tty1::respawn:/sbin/getty 38400 tty1
+tty2::respawn:/sbin/getty 38400 tty2
+tty3::respawn:/sbin/getty 38400 tty3
+tty4::respawn:/sbin/getty 38400 tty4
+tty5::respawn:/sbin/getty 38400 tty5
+tty6::respawn:/sbin/getty 38400 tty6
+
+# Put a getty on the serial line (for a terminal)
+# uncomment this line if your using a serial console
+#::respawn:/sbin/getty -L ttyS0 115200 vt100
+
+::shutdown:/etc/rc.d/shutdown
+::ctrlaltdel:/sbin/reboot
+EOF
+\end{lstlisting}
+ \subsubsection{Hostname}
+  \begin{itemize}
+  \item Pick a hostname. Set it to \texttt{CLFS\_HOST} (replace localhost below)
+\begin{lstlisting}
+CLFS_HOST="localhost"
+\end{lstlisting}
+  \item Make it into a file
+\begin{lstlisting}
+echo "$CLFS_HOST" > ${CLFS}/etc/HOSTNAME
+\end{lstlisting}
+ \end{itemize}
+ \subsubsection{Hosts file}
+  \begin{itemize}
+  \item Fill file.
+Replace \texttt{CLFS\_HOSTNAME} with your name, as cat  doesn't evaluate it.
+\begin{lstlisting}
+cat > ${CLFS}/etc/hosts << "EOF"
+# Begin /etc/hosts (network card version)
+
+127.0.0.1 localhost
+127.0.1.1 CLFS_HOSTNAME
+
+# End /etc/hosts (network card version)
+EOF
+\end{lstlisting}
+\end{itemize}	
+  \subsubsection{Network configuration}
+\begin{lstlisting}
+cat > ${CLFS}/etc/network.conf << "EOF"
+# /etc/network.conf
+# Global Networking Configuration
+# interface configuration is in /etc/network.d/
+
+# set to yes to enable networking
+NETWORKING=yes
+
+# set to yes to set default route to gateway
+USE_GATEWAY=no
+
+# set to gateway IP address
+GATEWAY=192.168.0.1
+
+# Interfaces to add to br0 bridge
+# Leave commented to not setup a network bridge
+# Substitute br0 for eth0 in the interface.eth0 sample below to bring up br0
+# instead
+# bcm47xx with vlans:
+#BRIDGE_INTERFACES="eth0.0 eth0.1 wlan0"
+# Other access point with a wired eth0 and a wireless wlan0 interface:
+#BRIDGE_INTERFACES="eth0 wlan0"
+
+EOF
+
+mkdir ${CLFS}/etc/network.d
+cat > ${CLFS}/etc/network.d/interface.eth0 << "EOF"
+# Network Interface Configuration
+
+# network device name
+INTERFACE=eth0
+
+# set to yes to use DHCP instead of the settings below
+DHCP=no
+
+# IP address
+IPADDRESS=192.168.1.2
+
+# netmask
+NETMASK=255.255.255.0
+
+# broadcast address
+BROADCAST=192.168.1.255
+EOF
+
+cat > ${CLFS}/etc/udhcpc.conf << "EOF"
+#!/bin/sh
+# udhcpc Interface Configuration
+# Based on http://lists.debian.org/debian-boot/2002/11/msg00500.html
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+RESOLV_CONF="/etc/resolv.conf"
+RESOLV_BAK="/etc/resolv.bak"
+
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+        deconfig)
+                if [ -f "$RESOLV_BAK" ]; then
+                        mv "$RESOLV_BAK" "$RESOLV_CONF"
+                fi
+                /sbin/ifconfig $interface 0.0.0.0
+                ;;
+
+        renew|bound)
+                /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
+
+                if [ -n "$router" ] ; then
+                        while route del default gw 0.0.0.0 dev $interface ; do
+                                true
+                        done
+
+                        for i in $router ; do
+                                route add default gw $i dev $interface
+                        done
+                fi
+
+                if [ ! -f "$RESOLV_BAK" ] && [ -f "$RESOLV_CONF" ]; then
+                        mv "$RESOLV_CONF" "$RESOLV_BAK"
+                fi
+
+                echo -n > $RESOLV_CONF
+                [ -n "$domain" ] && echo search $domain >> $RESOLV_CONF
+                for i in $dns ; do
+                        echo nameserver $i >> $RESOLV_CONF
+                done
+                ;;
+esac
+
+exit 0
+EOF
+
+chmod +x ${CLFS}/etc/udhcpc.conf
+cat > ${CLFS}/etc/resolv.conf << "EOF"
+# Begin /etc/resolv.conf
+
+domain example.org
+nameserver 192.168.0.1
+nameserver 192.168.1.1
+
+# End /etc/resolv.conf
+EOF
+\end{lstlisting}
+\subsection{Finishing Up}
+ \subsubsection{Make a final directory}
+  \begin{itemize}
+  \item Copy to a new directory
+\begin{lstlisting}
+install -dv ${CLFS}-final
+cp -arv ${CLFS}/* ${CLFS}-final/
+\end{lstlisting}
+  \item Remove the unnecessary things
+\begin{lstlisting}
+rm -rfv ${CLFS}-final/cross-tools
+rm -rfv ${CLFS}-final/usr/src/*
+rm -rfv ${CLFS}-final/usr/include
+rm -rfv ${CLFS}-final/usr/man
+rm -rfv ${CLFS}-final/usr/share/man
+rm -rfv ${CLFS}-final/sources
+FILES="$(ls ${CLFS}-final/lib/*.a ${CLFS}-final/usr/lib/*.a)"
+for file in $FILES; do rm -fv $file; done
+\end{lstlisting}
+ \end{itemize}
+ \subsubsection{Create a tarball}
+\begin{lstlisting}
+install -dv ${CLFS}/build
+cd ${CLFS}-final
+tar jcfv ${CLFS}/build/clfs-leon3-embedded.tar.bz2 *
+\end{lstlisting}
+

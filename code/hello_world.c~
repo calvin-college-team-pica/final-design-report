@@ -1,0 +1,11 @@
+/*************************************************************
+ * MSP430F47197 Hello World Demo
+ * Description: Toggle LED located at P5.1 on MSP430 Dev Board
+ *                  MSP430x471x7
+ *             -----------------
+ *         /|\|                 |
+ *          | |                 |
+ *          --|RST              |
+ *            |                 |
+ *            |             P5.1|-->LED
+ */

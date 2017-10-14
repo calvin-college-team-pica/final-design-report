@@ -1,0 +1,42 @@
+{
+\begin{longtable}[c]{|l|c|r|}
+\caption{MSP430F47197 Pinout}\\
+\hline
+\rowcolor{lightgray}
+  Pin Number & Pin Name & Pin Function\\ \hline\hline
+\endfirsthead
+
+\caption[]{Continued from previous page}\\
+\hline
+\rowcolor{lightgray}
+  Pin Number & Pin Name & Pin Function\\ \hline\hline
+\endhead
+
+\multicolumn{3}{r}{{Continued on next page}} \\
+\endfoot
+
+\endlastfoot
+
+  1 & A0+ & Phase 1 Voltage (Positive) \\
+  2 & A0- & Phase 1 Voltage (Negative) \\
+  3 & A1+ & Phase 2 Voltage (Positive) \\
+  4 & A1- & Phase 2 Voltage (Negative) \\
+  5 & A2+ & Phase 3 Voltage (Positive) \\
+  6 & A2- & Phase 3 Voltage (Negative) \\
+  7 & AVSS & Tie to Ground (GND) \\
+  8 & AVCC & $3\volt$ input \\
+  9 & VREF & Virtual Ground \\
+  10 & A3+ & Phase 1 Current (Positive) \\
+  11 & A3- & Phase 1 Current (Negative) \\
+  12 & A4+ & Phase 2 Current (Positive) \\
+  13 & A4- & Phase 2 Current (Negative) \\
+  14 & A5+ & Phase 3 Current (Positive) \\
+  15 & A5- & Phase 3 Current (Negative) \\
+  16 & A6+ & Unused \\
+  17 & A6- & Unused \\
+  18 & VSS & Tie to Ground (GND) \\
+  19 & S0 & LCD segment pin 00 \\
+
+\end{longtable}
+}
+

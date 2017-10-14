@@ -1,0 +1,173 @@
+\section{Base Station}
+The original design for the base station called for a self-contained Linux
+system to collect and process the measurements from the other PICA
+systems. To accomplish this goal, the design team decided to use an
+\ac{FPGA} development board and program it will the SPARC-compatible LEON3
+soft-processor, which is licensed under the \ac{GPL}. While this option
+showed a great deal of promise, it ultimately lead to more obstacles than
+the team decided could be overcome without detracting from the other areas
+of the project. In light of this decision, the role of the base station
+will be fulfilled by a standard desktop computer using custom software to
+perform the tasks that an embedded system would have performed.
+
+
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width=0.8\textwidth]{figures/Base_Station_Block_Diagram}
+%\caption{Base Station functional block diagram}
+%\label{fig:base_station_block_diagram}
+%\end{center}
+%\end{figure}
+
+\subsection{Device Selection}
+As the base station would have collected and formatted the measurements
+taken from the other PICA devices, it would have required a fair amount of
+processing power to perform its duties. While a modern desktop computer
+would provide more than enough computational ability, the design team
+focused on creating a single-purpose embedded Linux system that would
+perform the necessary tasks without competing with the processes a user
+might run on a home computer. In order to build such a device, the design
+team required hardware that was flexible enough to allow extra devices such
+as XBee radios or large storage devices to attach to it, but would also
+have features like networking built-in.
+
+\subsubsection{Board Selection}
+In their search for suitable hardware, the design team discovered an
+\ac{FPGA} development board that a previous senior design team had ordered
+for their own project. This development board, a Digilent ML-509
+educational board,  included a 9-pin \ac{RS232} serial port, a standard
+networking port, a compact-flash reader, and many configurable pins for
+attaching extra devices. In addition to these peripherals, the board
+featured a Xilinx Virtex 5 \ac{FPGA}, which could be configured into a wide
+variety of different processors or systems for which a standard hardware
+description could be found. Upon finding that these features met the
+requirements for the base station, the design team selected the board for
+making a prototype of the base station.
+
+While the Virtex 5 chip offered flexibility during development, including
+it in a production design would drive the price of the base station very
+high. As this flexibility is not needed for  production editions of the
+base station, a traditional processor would replace the \ac{FPGA} for both
+cost and simplicity.
+
+\subsubsection{Processor Selection}
+Having selected the development board, the design team looked at several
+different options for soft-processors. The team settled on the
+SPARC-compatible LEON3 processor, which is licensed under the \ac{GPL}, as
+it seemed to provide an outstanding all-in-one package. In addition to the
+processor itself, the LEON3 package included interfaces for the development
+board's network, display, and serial peripheral controllers. The LEON3
+vendor, Gaisler-Aeroflex, provided a host of cross-compilers and tools to
+interface with and debug the processor under free or demo licenses. They
+also advertise a Linux distribution containing a variety of utilities and
+programs. With all these tools available, the design team felt certain that
+the LEON3 would provide everything required of the base station.
+
+\subsection{Building the LEON3 Processor}
+In order to use the LEON3 soft-processor, the \ac{FPGA} required a
+configuration file generated from the LEON3 hardware description files. As
+the \ac{FPGA} was a Xilinx part, the design team downloaded ISE, the Xilinx
+software suite for creating part-specific configurations from the
+description files. Although Xilinx provides a ``Webpack'' edition of ISE
+free of charge, its functionality is very limited. In fact, the synthesis
+tools for the specific \ac{FPGA} on the board, the XC5VLX110t, were
+explicitly disabled without a license for ISE. To work around this issue,
+the team requested a thirty-day evaluation license from Xilinx, which
+unlocked the required synthesis tools for the processor on the ML-509
+board.
+
+\subsubsection{Configuring the Source Files}
+The LEON3 hardware description source files came with pre-made
+configurations for many different boards, including one for the ML-509. As
+such, this configuration could be used directly without requiring further
+changes, although the automated process took more than an hour to
+complete. When this task completed, it produced a bitfile that configured
+the specific model of \ac{FPGA} to behave like the LEON3 processor. The
+design team later discovered that Gaisler had a functionally similar
+bitfile available for direct download.
+
+\subsubsection{Programming the \ac{FPGA}}
+In order to use the Xilinx tool to program the \ac{FPGA}, the workstation
+computer needed access to the development board's configuration. Xilinx
+provided a programmer pod, a \ac{USB} device to access the \ac{FPGA}'s
+configuration using the \ac{JTAG} protocol, for exactly this purpose. Once
+fitted with the appropriate drivers, the workstation successfully detected
+the pod. The Xilinx program \texttt{impact} wrote the bitfile into the
+\ac{FPGA}, transforming it into the LEON3 processor.
+
+\subsubsection{Managing the LEON3 Processor}
+Gaisler-Aeroflex provided an evaluation version of their \texttt{grmon}
+tool to connect to the LEON3 for loading and debugging code on it. As
+described in its manual, \texttt{grmon} could connect to the processor
+using the same \ac{JTAG} pod that \texttt{impact} used to program the
+device. This claim held true, and \texttt{grmon} promptly gave a summary of
+the system it found there.
+
+\subsection{Extending the LEON3}
+\typeout{Make sure the article near line \the\inputlineno\ is correct!}
+While Gaisler-Aeroflex provided the core LEON3 and its interfaces to
+hardware under the \ac{GPL}, they do not distribute an \ac{FPU} under the
+same license. As such, on the default LEON3 system, any float-point
+operations would be emulated in software, rather than performed in
+hardware. As the intended purpose of the base station would likely involve
+operations with floating-point numbers, including a hardware \ac{FPU} would
+likely benefit the performance of the base station.
+
+While the LEON3 configuration tools include a section for adding an
+\ac{FPU} to the system, they did not include the description files for such
+a device. Instead, Gaisler provided its own \ac{FPU}s as a separate
+download. By separating them from the \ac{GPL}-licensed source, Gaisler
+could distribute the \ac{FPU} in a form that could be included into the
+LEON3 system without exposing their source description files. Once these
+files were added into the project, the LEON3 configuration tool could
+include them into the next bitfile. The design team created and loaded the
+bitfile onto the \ac{FPGA}, and asked \texttt{grmon} to display information
+about the system. Its output is given in the appendix, listing
+\ref{lst:grmon_hw}.
+
+\subsection{Running Gaisler Linux on the LEON3 Processor}
+As previously mentioned, Gaisler-Aeroflex provided a customized Linux
+distribution for the LEON3, which is derived from the SnapGear embedded
+Linux distribution. They also provided a pre-built compiling tool chain
+based on \ac{GCC}. Using these two together should have produced a small
+Linux system for the LEON3. The critical components of the system, such as
+the Linux kernel and the LEON3 bootloader, functioned without much extra
+tweaking. An example of the messages printed by the Linux kernel over a
+serial connection may be found in the appendix, listing
+\ref{lst:linux_w_ifconfig}.
+
+Gaisler provided a configuration tool for their distribution that behaved
+very similarly to their previous configuration tools. This tool not only
+allowed for configuring the kernel, but also for creating an entire Linux
+system around it, complete with a shell and a wide range of utilities and
+applications. Unfortunately, very few of them worked without
+tinkering. Some options could not be built at all, others could be built
+with a sufficient amount of tweaking, but even then the configuration files
+for these programs did not install correctly into the distribution's
+miniature file-system. The design team tried multiple times to get the
+system working, but when the distribution's bundled \ac{DHCP} client would
+not load due to library linking failures, the team decided to try a
+different approach. Message logs with these failures can be found in the
+appendix, listings \ref{lst:dhcp_busybox} and \ref{lst:dhcp_bash}.
+
+\subsection{Building Linux from Scratch for the LEON3}
+In order to build a Linux system without dealing with Gaisler's
+distribution, the design team changed focus to building a Linux
+distribution from source code. The team referenced the guide at
+\url{http://cross-lfs.org/view/clfs-embedded/arm/}, and adapted it for the
+LEON3 SPARC system. While this process ran quite smoothly, it ultimately
+failed when trying to boot on the LEON3, where the system unexpectedly
+stopped at a break point. This problem persisted even when the debugging
+connection asserted that such breakpoints should be ignored. The design
+team's modified guide is given in the appendix, section
+\ref{sec:sparc_embedded_guide}.
+
+\subsection{Final Decision}
+Due to hardware difficulties, the design team believes that the time
+required to get a LEON3-powered base station would be better spent on other
+areas of the project. As the ZigBee radio receivers work well on desktops,
+the team intends to create a monitoring application to run on a
+ZigBee-enabled home computer. While this does not allow for an always-on
+dedicated device, it provides similar functionality using a device that is
+familiar to most home-owners.
+

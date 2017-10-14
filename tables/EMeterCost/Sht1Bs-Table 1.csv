@@ -1,0 +1,21 @@
+,,,,,
+,Interest,,,,
+,0.12,,,,
+,,,,,
+,,,,,
+,,,Year,,
+,Line,How calculated,1,2,3
+,,,,,
+,Variable Goods,future from present,6432000,8068301,9036497
+,Fixed Goods,future from present,48000,60211,67437
+,Variable Operating,future from present,768000,963379,1078985
+,Fixed Operating,annualize,126470,74832,52656
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,Base Station,,,
+,,6400000,32000,6432000,
+,,48000,,48000, 
+,,768000,,768000,
+,,6470,120000,126470,

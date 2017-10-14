@@ -1,0 +1,331 @@
+\section{Requirements}
+
+\subsection{Base Station Requirements}\label{sec:base_station_reqs}
+All requirements under this heading are to be assumed to be of the base station (``the system'') unless explicitly stated otherwise.
+
+\subsubsection{Functional Requirements}
+\begin{outline}[enumerate]
+\1 Shall be capable of upgrading its software and firmware upon administrator requests.
+\1 Shall be capable of connecting with other PICA sub-systems over a pre-defined and pre-arranged communications protocol.
+ \2 Shall receive and store power usage measurements from connected PICA systems.
+  \3 These measurements will be taken at a frequency that does not exceed the established bandwidth of the chosen protocol.
+  \3 These measurements will be summarized or discarded (at the user's selection) when the storage space of the system nears its capacity.
+ \2 Shall receive and store events and alerts from connected PICA systems.
+  \3 The nature of these events shall be determined by each individual system, but shall be communicated to the base station in a standardized format.
+  \3 The system shall organize these events internally and display them to the user.
+ \2 Shall function as a \ac{NTP} server for connected PICA systems.
+ \2 Shall receive and record event log information from connected PICA systems.
+\1 Shall be capable of connecting to a \ac{LAN}.
+\1 Shall be capable of using settings that the user selects.
+ \2 Shall be capable of recognizing an invalid setting.
+ \2 Shall be capable of reverting to a default setting when the user setting is not valid.
+\1 Shall be capable of displaying the most recent measurements from the connected PICA systems.
+\1 Shall be capable of displaying the status of the connected PICA systems.
+ \2 Status shall include whether the connected system is in an error state.
+ \2 Status shall include the time since the last observed error state, if applicable.
+ \2 Status shall include the nature of the last error, if communicated.
+\1 Shall be capable of giving an authenticated base-station adminstrator similarly-privileged administrative access to connected PICA systems.
+ \2 The extent of this access shall be deteremined by the individual PICA systems.
+ \2 The base station shall inform the administrator when the remote administrative access is rejected or unavailable.
+\1 Shall be capable of distributing system updates for connected PICA systems.
+ \2 Shall be capable of sending update data and images to the appropriate subsystems.
+ \2 Shall identify whether or not the connected PICA systems require updating.
+\1 Shall be capable of giving debugging and troubleshooting output.
+ \2 Shall display simple status indication using \acp{LED}. (See \ref{sssection:base-station-ui-reqs})
+ \2 Shall present more detailed debugging and troubleshooting information over a dedicated RS-232 connection.
+\1 Shall be capable of actively notifying the power-company and consumer.
+\end{outline}
+
+\subsubsection{Behavioral Requirements}
+\begin{outline}[enumerate]
+\1 Shall store user-defined configuration in non-volatile media.
+ \2 Shall initialize this configuration using a pre-defined default configuration.
+ \2 Shall load the default configuration if the user-defined configuration is unavailable.
+  \3 This includes the user-defined configuration being absent.
+  \3 This includes the user-defined configuration containing invalid data.
+\1 Shall include a backup firmware in the event of a failed firmware upgrade.
+ \2 Firmware upgrade success or failure shall be determined by comparing checksums of the firmware to be written and the firmware present after writing.
+ \2 The backup firmware shall be engaged if the system fails to boot from the first firmware.
+\1 Shall store critical event logs from connected PICA systems in a non-volatile media.
+\1 Shall host a webpage to display system information when browsed over the \ac{LAN} connection.
+\1 Shall store its software in non-volatile media.
+\1 Shall run an operating system to manage hardware, device drivers, and connections to connected PICA systems.
+\1 Shall use a defined communication protocol to communicate with connected PICA systems.
+\end{outline}
+
+\subsubsection{Software Requirements}
+\begin{outline}[enumerate]
+\1 Shall include and run an upgradable \ac{OS}.
+\2 The \ac{OS} shall include the drivers necessary to operate the system hardware.
+\2 The \ac{OS} shall include the protocols necessary to connect to PICA sub-systems.
+\1 The \ac{OS} shall have an administrator-privileged user who may change the configuration of the system and of connected PICA systems.
+\1 The \ac{OS} shall give the system owner access this administrator-privileged user account.
+ \2 The \ac{OS} is not required to give such access to connected systems that are not owned by the owner of the base station system (such as those owned by the power company).
+ \2 The \ac{OS} shall authenticate that the user requesting administrator access is authorized to do so using a means configured during system installation.
+\1 The \ac{OS} shall include the protocols necessary to connect to an existing \ac{LAN}.
+ \2 The \ac{OS} shall include a \ac{DHCP} client.
+ \2 The \ac{OS} shall support manual \ac{LAN} connection configuration.
+\1 The \ac{OS} shall control the system connectivity hardware to prevent unwanted devices, such as those owned by other customers, from being connected to the system.
+ \2 The \ac{OS} shall distinguish between wanted and unwanted systems as defined by administrator selection.
+  \3 By default, ZigBee connection requests will be rejected until authorized by the administrator.
+  \3 By default, \ac{LAN} connection requests will be trusted unless disallows by the administrator. 
+ \2 The \ac{OS} shall record connection requests from unwanted devices and display them to the administrator.
+\1 Shall include and run \ac{HTTP} server software to provide the web interface.
+\1 Shall include the necessary tools to download and apply software and firmware updates.
+\end{outline}
+
+\subsubsection{Hardware Requirements}
+\begin{outline}[enumerate]
+\1 Shall include a power supply to power the system from line voltage during regular usage conditions.
+\1 The power supply shall tolerate moderate expected fluctuations in input voltage from a standard power outlet.
+ \2 The power supply is not required to tolerate incorrect voltage input (240V instead of 120V, etc.)
+ \2 The power supply is not required to tolerate voltage spikes as may be associated with electrical storms.
+\1 Shall include an internal power storage device to allow the system to perform necessary data storage immediately after a power failure.
+\1 Shall have adequate \ac{RAM} to contain system software, cache data from other PICA devices, and cache data to send to other PICA devices without requiring a cache flush more than once per minute.
+\1 Shall have a processor to execute the system software and process data from connected PICA devices.
+ \2 The processor must have sufficient processing speed to process the incoming data from other PICA devices at a rate greater than the rate of data incoming.
+ \2 The processor must be able to perform all necessary mathematical operations without a co-processor.
+\1 Shall have an Ethernet controller for connecting to a \ac{LAN}.
+\1 Shall have an RS-232 controller for debugging and troubleshooting the system.
+\1 Shall have ZigBee connectivity hardware for communication with other PICA systems.
+\1 Shall have non-volatile storage dedicated to storing system firmware.
+ \2 Shall have a re-writable non-volatile storage device to contain boot firmware.
+ \2 Shall have a separate non-volatile storage device to contain backup firmware to use in the event of boot failure.
+\1 Shall have non-volatile storage sufficient to store system software.
+\1 Shall have non-volatile storage sufficient to store recorded events and short-term consumption history for up to a period of 3 years.
+\end{outline}
+
+\subsubsection{User Interface Requirements}
+\label{sssection:base-station-ui-reqs}
+\begin{outline}[enumerate]
+\1 Shall provide a web interface for viewing collected data over the \ac{LAN}.
+\1 Shall provide a web interface for viewing current and predicted pricing information as provided by the power company.
+\1 Shall provide a web interface for system administration to an authenticated administrator.
+ \2 Shall include an interface for managing updates to the system's firmware and software
+  \3 Shall include an interface for displaying the version numbers or codes of the firmware and software currently installed on the base station.
+  \3 Shall include an interface for indicating the availability of system updates for the base station.
+  \3 Shall include an interface by which the administrator may request that the base station apply its available updates and be informed on whether or not the base station must be rebooted after the update is installed.
+  \3 Shall include an interface for indicating the progress of update installation.
+ \2 Shall include an interface for managing connections to other PICA systems.
+  \3 Shall include an interface for displaying current connections to other PICA systems.
+  \3 Shall include an interface for adding, removing, or connections made to other PICA systems.
+ \2 Shall include an interface for administration of connected PICA systems.
+  \3 Shall include interfaces for managing configurations of connected PICA systems.
+  \3 Shall include an interface for deploying software/firmware upgrades to connected PICA systems.
+\1 Shall provide a debugging interface over an RS-232 serial connection.
+\1 Shall display status indication lights.
+ \2 System is connected to power.
+ \2 System is connected to other PICA subsystems.
+ \2 System is connected to the home network.
+ \2 System has encountered an error.
+  \3 Error light shall trigger if a connection to another PICA system is lost and cannot be recovered within 30 seconds.
+  \3 Error light shall trigger when the storage medium contains less than $5\%$ free space.
+  \3 Error light shall trigger when the storage medium's file system cannot be mounted.
+   \4 This includes the storage medium being physically absent.
+   \4 This includes the storage medium being corrupt.
+
+\end{outline}
+
+\subsubsection{Power Requirements}
+\begin{outline}[enumerate]
+\1 Shall be powered from a standard 120V wall outlet.
+\1 Shall have a \ac{DC} power supply to power internal components.
+\1 Shall have a backup power supply to enable the system to save all measurements residing in memory to the non-volatile storage medium.
+\1 Shall require less than 10W to operate.
+\end{outline}
+
+\subsubsection{Codes and Compliances}
+\begin{outline}[enumerate]
+\1 Shall have a polarized electrical plug if the power supply features an an off-on control switch.
+\1 Shall restrict \ac{EM} radiation to comply with \ac{FCC} Title 47 Part 15.
+\end{outline}
+
+\subsection{Smart Breaker Requirements}\label{sec:ssb_reqs}
+All requirements are to be assumed to be of the solid state breakers (``the system'') unless explicitly stated otherwise.
+
+The breaker subsystem must be capable of two major functions; it must protect the connected circuit when a specified threshold is exceeded, and it must pass information to and from the user interface, either directly or through another subsystem.
+
+\subsubsection{Functional Requirements}
+\begin{outline}[enumerate]
+\1 Shall be capable of completely disconnecting, either physically or virtually, the power delivered to the connected circuit.
+\1 Shall provide two-way communications to the base station through the \ac{MCU}.
+\2 Shall provide power usage information, including at a minimum, instantaneous voltage and current of the connected circuit.
+\2 Shall be capable of providing on/off status of the breaker.
+\2 Shall be capable of turning breakers on and off when requested by the base station.
+\1 Shall be capable of detecting power sags, brownout conditions and blackouts.
+\2 The \ac{NPC} defines sag as ''80\% to 85\% below normal [voltage] for a short period of time,'' \cite{natpow}. For project uses, this is below 100V. The team defines ``a short period of time'' to be for three cycles to ten cycles, based on information given in \cite{VoltSag}. The \ac{NPC} defines a brownout as ``a steady lower voltage state,'' \cite{natpow} Blackouts are defined by the \ac{NPC} as ``as zero-voltage condition that lasts for more than two cycles,''\cite{natpow}.
+\1 Shall store up to a minute of gathered information for at least five minutes in on-chip memory for transmission to the \ac{MCU}.
+\1 Shall package the stored information for transmission to \ac{MCU}.
+\1 Shall be capable of turning off circuits individually.
+\1 Shall stop current flow to a circuit when it exceeds a specified threshold.
+\1 Shall be capable of being reset when stopped, without requiring new parts such as fuses.
+\end{outline}
+
+\subsubsection{Behavioral Requirements}
+\begin{outline}[enumerate]
+\1 Shall initialize all components by writing from non-volatile storage to all necessary registers when power is restored to the circuit.
+\1 Shall report all system events that are not part of standard operation to the critical event log.
+\1 Shall measure voltage levels in the connected circuit.
+\1 Shall measure current flow in the connected circuit.
+\end{outline}
+
+\subsubsection{Hardware Requirements}
+\begin{outline}[enumerate]
+\1 Shall use non-volatile storage to store data when the system is without power.
+\1 Shall be capable of managing its own data and functions.
+\end{outline}
+
+\subsubsection{User Interface Requirements}
+\begin{outline}[enumerate]
+\1 Shall have an external interface that is understandable by the average consumer.
+\1 Shall provide a way to control the breakers independent from the base station.
+\1 Shall encase all circuitry except user interface controls (buttons, switches) so that they cannot be tampered with without breaking the casing.
+\end{outline}
+
+\subsubsection{Power Requirements}
+\begin{outline}[enumerate]
+\1 Shall be powered by line-voltage.
+\1 Shall be powered such that interrupting the circuit does not cause the breaker control circuitry to lose power.
+\end{outline}
+
+\subsubsection{Physical Requirements}
+\begin{outline}[enumerate]
+\1 Shall have dimensions less than or equal to 1in x 3in x 4in for a single breaker or 2in x 3in x 4in for a breaker pair.
+\2Dimensions are determined by the standard size of a mechanical breaker, so that smart breakers may be interchangeable with conventional residential or commercial mechanical breakers.
+\1 Shall not weigh more than one pound.
+\2 Weight is determined by the average weight of a standard mechanical breaker \cite{homedepot}, so that smart breakers may be interchangeable with conventional residential or commercial mechanical breakers.
+\1 Shall accommodate wire sizes from 14-4 Cu to 12-8 Al.
+\2 Wire size is based on the average size wire used with standard mechanical breakers \cite{homedepot}, so that smart breakers may be interchangeable with conventional residential or commercial mechanical breakers.
+\end{outline}
+
+\subsubsection{Safety Requirements}
+\begin{outline}[enumerate]
+\1 Shall protect everything connected to the circuit from current exceeding a specified threshold by providing circuit interruption.
+\1 Shall have safety hazards clearly marked and visible from outside the system.
+\1 Shall safely isolate high-voltage areas so that they provide no more threat than a standard wall outlet.
+\end{outline}
+
+\subsubsection{Codes and Compliances}
+\begin{outline}[enumerate]
+\1 Shall be compliant with \ac{ANSI} C12.19 \cite{ANSIC1219}.
+\1 Shall be compliant with \ac{ANSI} C12.21 \cite{ANSIC1221}.
+\1 Shall be compliant with \ac{FCC} Title 47 Part 15 \cite{FCC}.
+\end{outline}
+
+\subsection{E Meter Requirements}\label{sec:e_meter_reqs}
+All requirements are to be assumed to be of the electric panel meter (``the system'') unless explicitly stated otherwise.
+
+\subsubsection{Functional Requirements}
+\begin{outline}[enumerate]
+\1 Shall continuously monitor the power used from either a single-phase or a multi-phase installation.
+\1 Shall store power usage data locally, to be transmitted back to the base station at regular intervals.
+\1 Shall by default display instantaneous and historical power usage data on an \ac{LCD} module integrated into the electric panel.
+\1 Shall provide two-way communication with the \ac{MCU} to report usage data.
+\1 Shall be capable of detecting a brownout condition and storing critical data before shutting down.
+\1 Shall be capable of restarting and restoring stored data after a brownout condition.
+\1 Shall be capable of detecting any tampering, such as opening the sealed metering unit, and transmitting a tamper message to both the power-company and the consumer.
+\1 Shall monitor current flow through the main service lines for automated meter reading.
+\1 Shall monitor voltage levels on the main service lines for automated meter reading.
+\1 Shall control the service shutoff switch by receiving and validating a service shutoff message from the power-company.
+\1 Shall provide a method for controlling the service shutoff switch from a local interface.
+\1 Shall provide an interface for 3rd party meters, such as gas, water, or other utility meters to report data over the PICA network.
+\1 Shall support on-demand reports from the power company via the Zigbee network or the user via the PICA web interface of power usage, energy consumption, demand, power quality and system status.
+\1 Shall support bi-directional metering and calculation of net power usage to support alternative energy generation systems.
+\1 Shall support automatic meter reads.
+\1 Shall analyze the voltage flicker, logging a warning when the flicker exceeds 20\% of the stated $117V_{RMS}$. 
+\1Shall meter reactive power consumption, logging data for billing purposes.
+\end{outline}
+
+\subsubsection{Behavioral Requirements}
+\begin{outline}[enumerate]
+\1 Shall, in the event of wireless link loss; attempt to re-establish the wireless link.
+\1 Shall, in the event of a wireless link loss, revert to stand-alone mode, storing data internally until internal storage is full, at which point the system will begin overwriting the oldest data with the newest data.
+\1 Shall, in the event of a wireless link loss, notify the user via the \ac{LCD} display.
+\1 Shall perform a built-in self-test upon system boot up to verify onboard storage integrity and to verify proper operating software.
+\1 Shall, in the event of a brownout, save all volatile information to non-volatile storage space.
+\1 Shall be capable of detecting corrupted data, via parity bits, when brought out of a brownout condition.
+\1 Shall log all events processed into the following four categories: 
+\2 critical: messages requiring immediate attention. 
+\2 error: messages requiring attention and may affect system functionality. 
+\2 warning: messages that require attention but do no impact system functionality.
+\2 note: messages that require no attention but provide verification of proper operation. 
+\1 Shall report all events to the PICA base station.
+\1 Shall report to the power-company as specified by event criticality.
+\1 Shall have dedicated non-volatile storage for all critical settings and configuration data.
+\1 Shall compute the total power used in kilowatt-hours.
+\1Shall be capable of receiving messages from the power-company, providing the user with the current cost of a kilowatt-hour.
+\1 Shall use 128-bit \ac{AES} encryption for all messages transmitted outside of the device. 
+\1 Shall report the total amount of outage time to both the power company and the PICA base station. 
+\1 Shall date-stamp all detected outages with the date, time, and duration of the outage.
+\end{outline}
+
+\subsubsection{Software Requirements}
+\begin{outline}[enumerate]
+\1 Shall verify system firmware on boot up.
+\1 Shall periodically, minimum once per day, perform a system check to verify the health and status of the system.
+\1 Shall perform an on-demand system health and status check as demanded by the PICA base station or the power-company.
+\1 Shall contain sufficient non-volatile storage for all system configuration settings.
+\1 Shall be updateable through the power-company wireless interface.
+\1 Shall be capable of properly recovering from a failed software update.
+\1 Shall give authorized access to components of the system configuration as appropriate to the power-company and consumer.
+\1 Shall notify the power-company and the PICA base station once service has been restored containing the time of restoration and a voltage measurement.
+\1 Shall have a unique IPv6 address for the power-company mesh network.
+\1 Shall have a unique IPv4 or IPv6 network address for the local home-area-network. 
+\1 Shall receive an \ac{NTP} message from the PICA base station to set the hardware clock. 
+\1 Shall synchronize the hardware clock with the base station time once per day. 
+\1 Shall support on-demand hardware clock synchronization via the PICA base station web interface.
+\end{outline}
+
+\subsubsection{Hardware Requirements}
+\begin{outline}[enumerate]
+\1 Shall be completely enclosed in a weatherproof case, tolerant of extreme temperature differences. 
+\1 Shall be completely \ac{AC} coupled against transient \ac{AC} voltages. 
+\1 Shall be mounted in the same location as a standard power meter. 
+\1 Shall provide non-volatile storage.
+\1 Shall be grounded.
+\1 Shall provide a hardware system clock, set by the software and synchronized with the PICA base station.
+\end{outline}
+
+\subsubsection{User Interface Requirements}
+\begin{outline}[enumerate]
+\1 Shall have a 160-segment \ac{LCD} display module, viewable from outside the electric panel.
+\1 Shall be capable of interfacing with a web-based application for stand-alone configuration.
+\1 Shall provide push-buttons for changing the viewing contents on the display module between metering and system status views.
+\end{outline}
+
+\subsubsection{Power Requirements}
+\begin{outline}[enumerate]
+\1 Shall be capable of operating from line-voltage.
+\1 Shall be powered from before the master breaker, preventing the meter from losing power when the master breaker is switched off.
+\end{outline}
+
+\subsubsection{Safety Requirements}
+\begin{outline}[enumerate]
+\1 Shall meet or exceed safety requirements for devices inside an electric panel. 
+\1 Shall provide a grounding point to ground the system when installed. 
+\1 Shall be protected against the elements. 4. Shall safely isolate high-voltage areas.
+\end{outline}
+
+\subsubsection{Codes and Compliances}
+\begin{outline}[enumerate]
+\1 Shall be compliant with \ac{ANSI} C12.19.
+\1 Shall be compliant with \ac{ANSI} C12.21.
+\1 Shall be compliant with \ac{FCC} Title 47 Part 15.
+\end{outline}
+
+\subsection{Power Supply Requirements}
+All requirements under this heading are to be assumed to be of the power supply (``the system'') unless explicitly stated otherwise.
+\begin{outline}[enumerate]
+\1 Shall be 78\% efficient.
+\2 This efficiency was chosen, because it is what SMPS were generally.
+\1 Shall power 2 ADE devices.
+\1 Shall provide 5VDC +/- 5\%.
+\1 Shall provide $2\milli\ampere$, $3\milli\ampere$ (total $5\milli\ampere$) plus a Safety factor.
+\2 A safety factor can be efficient as 1.0001x.
+\1 Shall also power an FPGA that will control these chips in a production-scale design at 5VDC $\pm5\%$.
+\2 While the exact requirement for the FPGA are unknown the current was chosen much higher than probably needed in order to make sure the power supply would not need to be changed to provide more power.
+\1 Shall have a ripple voltage of less than $~1\%$.
+\1 Shall be isolated from mains supply by a high frequency transformer $~60Hz$.
+\1 Shall be small and not exceed $4\inch^3$.
+\1 Shall not be hot enough to where heat sinks are required.
+\end{outline}

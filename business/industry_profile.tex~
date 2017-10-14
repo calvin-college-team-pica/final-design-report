@@ -1,0 +1,25 @@
+\section{Industry Profile}
+\subsection{Overview of the Problem}
+Standard electric meters were developed decades ago and are still used today, despite many technological advances in the last several years. Along with these technological advances, Americans have become accustomed to having access to large amounts of data, but due to the nature of the standard electric meter, data regarding the usage of power is severely limited. For the power companies, data from the meters is minimal and grid control is limited to manual operation, costing them time and money.
+As the cost of electricity becomes higher and higher, electricity use in buildings is becoming a bigger concern and people have few cheap or simple ways to monitor this. Of the options available, most only address part of the whole problem, giving some information to the consumer and none to the power company or vice-versa. While there are devices such as breakers and fuses that provide electrical safety for buildings, advances in technology have made it possible to further improve safety but have not been implemented in a cost-effective way or made easily available to an average consumer, which for the purpose of this project shall be defined as a person without a mathematical or scientific education beyond high-school.
+
+\subsection{Major Customer Groups}
+The two main customers of the PICA system are power companies and power consumers. The E-meter subsystem will only be sold to power companies, as they must in turn provide metering equipement to their customers. The base station and solid-state breakers will be sold to power consumers who are interested in knowing how much power they use in different regions of their buildings.
+
+\subsection{Regulatory Requirements} % This has been fixed
+The PICA system must meet certain codes in order to be safe enough for the customer to use, which will also protect from unexpected lawsuits. \ac{UL} is an independent product safety certification organization, which offers safety certifications to products \cite{UL_Web}. In order to gain the confidence of customers, the devices of the PICA system will be UL certifiable. The specific qualifications of \ac{UL} certification remain unknown to the design team, as the documents regarding the certification requirements are not publicly available. The system will also restrict \ac{EM} radiation to comply with \ac{FCC} Title 47 Part 15. It will also comply with \ac{ANSI} C12.19 and \ac{ANSI} C12.21 standards.
+
+While these standards should ensure the general safety of the PICA devices, defects or unforeseen circumstances could imperil users or their property. The PICA system will provide a limited warranty against defects, but cannot be expected to foresee all possible circumstances. To this end, the devices will ship and work with a disclaimer regarding safe operating conditions and the hazards of tampering with the device.
+
+In addition to ensuring the physical safety of the users, the system should also ensure the privacy and security of the users' information. While any wireless link runs the risk of packet interception and capture by a malicious observer, this will only affect the data currently being transferred, and data encryption schemes may greatly hinder these intrusions. The stored data will likely not be encrypted, but will not be actively transmitted: the only means of accessing this data will be through the software controls set in place by the base station or by physically removing the storage medium and removing the data from it. The base station software will use permissions-based file system access and will require a user to authenticate as an administrator before accessing this information. In this way, the user's data will be stored with access controls and will be kept private.
+
+\subsection{Significant Trends and Growth Rate}
+Recently, the demand for ``smarter'' and more informative devices has been increasing with the awareness of resource stewardship and the effects of human activity on the environment. Currently, power companies are investigating smart meters and deploying them to their customers in pilot programs. Power consumers are becoming more energy- and economically-aware, so the time is ripe for providing the products that PICA, LLC.\ proposes.
+
+\subsection{Barriers to Entry and Exit}
+The major barriers to entry is customer recognition. Although power companies may still be testing smart meters before deploying them to their customers, introducing them to a new product might be difficult if they are already near to making a decision. Additionally, power consumers will not be able to buy from PICA, LLC.\ unless they specifically know of it already.
+
+
+%% echos will appear here
+
+

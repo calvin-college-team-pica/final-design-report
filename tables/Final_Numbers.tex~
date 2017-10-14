@@ -1,0 +1,18 @@
+\begin{table}
+\caption{Financial Overview}
+\begin{tabular}{|c|c|r|}
+\multirow{3}{*}{Initial Costs} & Facilities  & \$11,000\\\hline
+                               & Prototyping & \$82,000\\\hline
+                               & Total       & \$93,000\\\hline\hline
+\multirow{4}{*}{Fixed Recurring Costs} & Marketing \& Advertising & \$120,000\\\hline
+                                       & Legal & \$17,000\\\hline
+                                       & Facilities & \$12,000\\\hline
+                                       & Total & \$149,000\\\hline\hline
+
+\multirow{4}{*}{Variable Costs Per System} & Parts Cost & \$277\\\hline
+                                           & Labor      & \$44\\\hline
+                                           & Shipping   & \$16\\\hline
+                                           & Total      & \$337\\\hline
+\end{tabular}
+\label{}
+\end{table}
